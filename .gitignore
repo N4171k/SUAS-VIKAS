@@ -30,24 +30,3 @@ npm-debug.log*
 
 # Archive data images (large binary files)
 archive/data/*/
-
-# Zip archives
-*.zip
-
-# Temp files (e.g. from Claude editor)
-tmpclaude-*
-tmp*/
-
-# Windows NULL device artifact
-nul
-
-# Android env
-frontend/.env.android
-
-# Gradle caches
-**/.gradle/
-
-# Large binary assets (3D models, presentations)
-*.pptx
-*.pdf
-3d models/
