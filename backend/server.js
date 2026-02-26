@@ -44,8 +44,11 @@ app.set('io', io);
 app.use(helmet());
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
+    // Allow requests with no origin (mobile apps, curl, Vercel serverless, etc.)
     if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else if (process.env.VERCEL) {
+      // On Vercel, be more permissive (mobile apps, previews, etc.)
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -56,6 +59,17 @@ app.use(cors({
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Vercel may pre-parse the body; ensure req.body is always a plain object
+app.use((req, res, next) => {
+  if (req.body && typeof req.body === 'string') {
+    try { req.body = JSON.parse(req.body); } catch (_) {}
+  }
+  if (Buffer.isBuffer(req.body)) {
+    try { req.body = JSON.parse(req.body.toString()); } catch (_) {}
+  }
+  next();
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
