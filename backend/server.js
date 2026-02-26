@@ -107,8 +107,14 @@ const startServer = async () => {
   }
 };
 
-// Only start the HTTP server when running locally (not on Vercel)
-if (!process.env.VERCEL) {
+if (process.env.VERCEL) {
+  // On Vercel: connect DB eagerly (no server.listen needed)
+  connectDB()
+    .then(() => sequelize.sync({ alter: true }))
+    .then(() => console.log('✅ Vercel: DB connected & synced'))
+    .catch((err) => console.error('❌ Vercel DB init failed:', err.message));
+} else {
+  // Local development: start HTTP server
   startServer();
 }
 
