@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const pg = require('pg');
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
 // Strip sslmode from URL — SSL is configured via dialectOptions
@@ -6,6 +7,7 @@ const dbUrl = (process.env.DATABASE_URL || '').replace(/[?&]sslmode=[^&]*/g, '')
 
 const sequelize = new Sequelize(dbUrl, {
   dialect: 'postgres',
+  dialectModule: pg,
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   dialectOptions: {
     ssl: {
