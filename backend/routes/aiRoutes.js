@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/query', optionalAuth, async (req, res, next) => {
   try {
     console.log('[AI Query] body:', JSON.stringify(req.body), 'type:', typeof req.body);
-    const message = req.body?.message || (typeof req.body === 'string' ? JSON.parse(req.body).message : null);
+    const message = req.body?.message || req.body?.query || (typeof req.body === 'string' ? (() => { const p = JSON.parse(req.body); return p.message || p.query; })() : null);
 
     if (!message) {
       return res.status(400).json({ error: 'Message is required.', receivedBody: typeof req.body, keys: Object.keys(req.body || {}) });
