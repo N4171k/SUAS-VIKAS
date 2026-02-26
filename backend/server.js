@@ -107,6 +107,10 @@ const startServer = async () => {
   }
 };
 
-startServer();
+// Only start the HTTP server when running locally (not on Vercel)
+if (!process.env.VERCEL) {
+  startServer();
+}
 
-module.exports = { app, server, io };
+// Vercel requires the default export to be the Express app
+module.exports = app;
