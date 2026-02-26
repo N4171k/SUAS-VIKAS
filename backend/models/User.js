@@ -29,6 +29,26 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     defaultValue: null,
   },
+  gender: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  },
+  clothing_size: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  },
+  footwear_size: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  },
+  favourite_colors: {
+    type: DataTypes.JSON,
+    defaultValue: [],
+  },
+  style_preferences: {
+    type: DataTypes.JSON,
+    defaultValue: [],
+  },
 }, {
   tableName: 'VIKAS-users',
   timestamps: true,

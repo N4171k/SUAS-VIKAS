@@ -19,7 +19,7 @@ router.post('/register', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, gender, clothing_size, footwear_size, favourite_colors, style_preferences } = req.body;
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
@@ -32,6 +32,11 @@ router.post('/register', [
       email,
       password_hash,
       role: role === 'store_admin' ? 'store_admin' : 'customer',
+      gender: gender || null,
+      clothing_size: clothing_size || null,
+      footwear_size: footwear_size || null,
+      favourite_colors: favourite_colors || [],
+      style_preferences: style_preferences || [],
     });
 
     const token = jwt.sign(
@@ -50,7 +55,11 @@ router.post('/register', [
 
     res.status(201).json({
       message: 'Registration successful',
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      user: {
+        id: user.id, name: user.name, email: user.email, role: user.role,
+        gender: user.gender, clothing_size: user.clothing_size, footwear_size: user.footwear_size,
+        favourite_colors: user.favourite_colors, style_preferences: user.style_preferences,
+      },
       token,
     });
   } catch (error) {

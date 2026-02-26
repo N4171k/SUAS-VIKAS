@@ -37,8 +37,17 @@ export function AuthProvider({ children }) {
     return res.data;
   }, []);
 
-  const register = useCallback(async (name, email, password, phone) => {
-    const res = await api.post('/auth/register', { name, email, password, phone });
+  const register = useCallback(async (name, email, password, preferences = {}) => {
+    const res = await api.post('/auth/register', {
+      name,
+      email,
+      password,
+      gender: preferences.gender,
+      clothing_size: preferences.clothing_size,
+      footwear_size: preferences.footwear_size,
+      favourite_colors: preferences.favourite_colors,
+      style_preferences: preferences.style_preferences,
+    });
     persist(res.data.token, res.data.user);
     toast.success('Account created successfully!');
     return res.data;
