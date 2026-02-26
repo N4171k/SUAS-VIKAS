@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -94,8 +94,8 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
   try {
     await connectDB();
-    await sequelize.sync();
-    console.log('✅ Database synced');
+    await sequelize.sync({ alter: true });
+    console.log('✅ Database synced (with alter)');
 
     server.listen(PORT, () => {
       console.log(`🚀 VIKAS Backend running on port ${PORT}`);

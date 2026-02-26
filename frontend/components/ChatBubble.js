@@ -119,11 +119,11 @@ export default function ChatBubble({ productId = null, onClose }) {
       // Show related products if found
       if (foundProducts.length > 0) {
         const productList = foundProducts
-          .map((p) => `• ${p.title} — ₹${parseFloat(p.price).toLocaleString()} (⭐${p.rating})`)
+          .map((p) => `[\u{1F6CD}\uFE0F ${p.title}](/product/${p.id}) — \u20B9${parseFloat(p.price).toLocaleString()} (\u2B50${p.rating}) | ${p.colour || ''} | ${p.usage || ''}`)
           .join('\n');
         setMessages((prev) => [
           ...prev,
-          { role: 'assistant', content: `📦 Related Products:\n${productList}` },
+          { role: 'products', content: productList, products: foundProducts },
         ]);
       }
     } catch (err) {
@@ -158,13 +158,38 @@ export default function ChatBubble({ productId = null, onClose }) {
       <div ref={chatRef} className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.map((msg, i) => (
           <div key={i} className={`chat-message flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm whitespace-pre-line ${
-              msg.role === 'user'
-                ? 'bg-vikas-blue text-white rounded-br-md'
-                : 'bg-gray-100 text-gray-800 rounded-bl-md'
-            }`}>
-              {msg.content}
-            </div>
+            {msg.role === 'products' && msg.products ? (
+              <div className="max-w-[90%] space-y-2">
+                <p className="text-xs font-semibold text-gray-500 px-1">{'\uD83D\uDCE6'} Matching Products:</p>
+                {msg.products.map((p) => (
+                  <a key={p.id} href={`/product/${p.id}`}
+                    className="block bg-gray-50 hover:bg-blue-50 border border-gray-200 rounded-xl px-3 py-2 transition group">
+                    <div className="flex items-center gap-3">
+                      {p.image_url && (
+                        <img src={p.image_url} alt={p.title} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-800 truncate group-hover:text-vikas-blue">{p.title}</p>
+                        <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                          <span className="font-semibold text-vikas-blue">{'\u20B9'}{parseFloat(p.price).toLocaleString()}</span>
+                          <span>{'\u2B50'}{p.rating}</span>
+                          {p.colour && <span>{p.colour}</span>}
+                          {p.usage && <span>• {p.usage}</span>}
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm whitespace-pre-line ${
+                msg.role === 'user'
+                  ? 'bg-vikas-blue text-white rounded-br-md'
+                  : 'bg-gray-100 text-gray-800 rounded-bl-md'
+              }`}>
+                {msg.content}
+              </div>
+            )}
           </div>
         ))}
         {loading && (

@@ -1,7 +1,7 @@
 const express = require('express');
 const { Product } = require('../models');
 const { authenticate, optionalAuth } = require('../middleware/auth');
-const { SYSTEM_PROMPT, buildContext } = require('../services/groq');
+const { buildSystemPrompt, buildContext } = require('../services/groq');
 const ragService = require('../services/rag');
 
 const router = express.Router();
@@ -15,14 +15,23 @@ router.post('/query', optionalAuth, async (req, res, next) => {
       return res.status(400).json({ error: 'Message is required.' });
     }
 
+    // Fetch catalog summary so AI knows what the store carries
+    const catalogSummary = await ragService.getCatalogSummary();
+    const systemPrompt = buildSystemPrompt(catalogSummary);
+
     // Use RAG to find relevant products
     const relevantProducts = await ragService.searchProducts(message);
 
     // Build context string for the frontend to pass to Puter.js
-    const context = buildContext(relevantProducts);
+    let context = buildContext(relevantProducts);
+
+    // If no products found, add a hint so the AI knows
+    if (relevantProducts.length === 0) {
+      context = `No products matched the query "${message}". The store carries fashion items: ${catalogSummary.categories}. Product types include: ${catalogSummary.productTypes}. Suggest relevant fashion items the user might like instead.`;
+    }
 
     res.json({
-      systemPrompt: SYSTEM_PROMPT,
+      systemPrompt,
       context,
       products: relevantProducts.slice(0, 5),
       timestamp: new Date().toISOString(),
