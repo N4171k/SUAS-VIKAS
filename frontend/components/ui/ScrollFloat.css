@@ -1,0 +1,16 @@
+.scroll-float-container {
+  overflow: hidden;
+}
+
+.scroll-float-text {
+  display: inline-block;
+  font-size: clamp(2rem, 6vw, 7rem);
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.1;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.scroll-float-char {
+  display: inline-block;
+}

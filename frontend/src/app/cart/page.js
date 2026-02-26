@@ -43,7 +43,7 @@ export default function CartPage() {
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
         <FiShoppingBag className="w-16 h-16 mx-auto text-gray-300 mb-4" />
         <h2 className="text-xl font-semibold mb-2">Please login to view your cart</h2>
-        <Link href="/auth" className="text-vikas-blue hover:underline">Login here</Link>
+        <Link href="/auth" className="text-red-500 hover:underline">Login here</Link>
       </div>
     );
   }
@@ -60,7 +60,7 @@ export default function CartPage() {
         <div className="text-center py-16">
           <FiShoppingBag className="w-16 h-16 mx-auto text-gray-300 mb-4" />
           <p className="text-gray-500 mb-4">Your cart is empty</p>
-          <Link href="/products" className="bg-vikas-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-800">
+          <Link href="/products" className="bg-gray-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800">
             Continue Shopping
           </Link>
         </div>
@@ -74,7 +74,7 @@ export default function CartPage() {
                     alt={item.product?.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1">
-                  <Link href={`/product/${item.product_id}`} className="font-medium text-sm hover:text-vikas-blue line-clamp-2">
+                  <Link href={`/product/${item.product_id}`} className="font-medium text-sm hover:text-red-500 line-clamp-2">
                     {item.product?.title}
                   </Link>
                   <p className="text-lg font-bold mt-1">₹{parseFloat(item.product?.price || 0).toLocaleString()}</p>
@@ -103,10 +103,10 @@ export default function CartPage() {
               <hr className="my-3" />
               <div className="flex justify-between text-lg font-bold"><span>Total</span><span>₹{total.toLocaleString()}</span></div>
             </div>
-            <Link href="/checkout" className="block w-full bg-vikas-orange text-white py-3 rounded-lg font-semibold text-center hover:bg-orange-600 transition mt-4">
+            <Link href="/checkout" className="block w-full bg-red-500 text-white py-3 rounded-lg font-semibold text-center hover:bg-red-600 transition mt-4">
               Proceed to Checkout
             </Link>
-            <Link href="/products" className="block text-center text-sm text-vikas-blue hover:underline mt-3">
+            <Link href="/products" className="block text-center text-sm text-red-500 hover:underline mt-3">
               Continue Shopping
             </Link>
           </div>

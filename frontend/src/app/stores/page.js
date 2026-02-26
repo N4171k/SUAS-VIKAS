@@ -28,16 +28,16 @@ export default function StoresPage() {
               <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Open</span>
             </div>
             <div className="space-y-2 text-sm text-gray-600">
-              <p className="flex items-start gap-2"><FiMapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-vikas-blue" /> {store.address}</p>
-              <p className="flex items-center gap-2"><FiPhone className="w-4 h-4 flex-shrink-0 text-vikas-blue" /> {store.phone}</p>
-              <p className="flex items-center gap-2"><FiClock className="w-4 h-4 flex-shrink-0 text-vikas-blue" /> 09:00 AM – 09:00 PM</p>
+              <p className="flex items-start gap-2"><FiMapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-red-500" /> {store.address}</p>
+              <p className="flex items-center gap-2"><FiPhone className="w-4 h-4 flex-shrink-0 text-red-500" /> {store.phone}</p>
+              <p className="flex items-center gap-2"><FiClock className="w-4 h-4 flex-shrink-0 text-red-500" /> 09:00 AM – 09:00 PM</p>
             </div>
             <div className="mt-4 flex gap-2">
               <a href={`https://maps.google.com/?q=${store.latitude},${store.longitude}`} target="_blank" rel="noopener noreferrer"
-                className="flex-1 text-center bg-vikas-blue text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition">
+                className="flex-1 text-center bg-gray-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition">
                 Get Directions
               </a>
-              <button className="flex-1 text-center border border-vikas-blue text-vikas-blue py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition">
+              <button className="flex-1 text-center border border-gray-800 text-red-500 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition">
                 View Products
               </button>
             </div>

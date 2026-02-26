@@ -132,4 +132,43 @@ router.get('/me', authenticate, async (req, res) => {
   res.json({ user: req.user });
 });
 
+// PATCH /api/auth/preferences — update size, colours, style for logged-in user
+router.patch('/preferences', authenticate, async (req, res, next) => {
+  try {
+    const { gender, clothing_size, footwear_size, favourite_colors, style_preferences } = req.body;
+
+    const updates = {};
+    if (gender !== undefined) updates.gender = gender || null;
+    if (clothing_size !== undefined) updates.clothing_size = clothing_size || null;
+    if (footwear_size !== undefined) updates.footwear_size = footwear_size || null;
+    if (favourite_colors !== undefined) updates.favourite_colors = Array.isArray(favourite_colors) ? favourite_colors : [];
+    if (style_preferences !== undefined) updates.style_preferences = Array.isArray(style_preferences) ? style_preferences : [];
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: 'No preference fields provided.' });
+    }
+
+    await req.user.update(updates);
+
+    const fresh = await req.user.reload();
+
+    res.json({
+      message: 'Preferences updated successfully.',
+      user: {
+        id: fresh.id,
+        name: fresh.name,
+        email: fresh.email,
+        role: fresh.role,
+        gender: fresh.gender,
+        clothing_size: fresh.clothing_size,
+        footwear_size: fresh.footwear_size,
+        favourite_colors: fresh.favourite_colors,
+        style_preferences: fresh.style_preferences,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

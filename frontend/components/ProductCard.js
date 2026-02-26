@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { FiStar } from 'react-icons/fi';
+import { FiStar, FiHeart } from 'react-icons/fi';
 
 export default function ProductCard({ product, viewMode = 'grid' }) {
   const discount = product.original_price
@@ -9,37 +9,63 @@ export default function ProductCard({ product, viewMode = 'grid' }) {
 
   return (
     <Link href={`/product/${product.id}`}
-      className={`product-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 ${viewMode === 'list' ? 'flex gap-4 p-4' : 'p-4'}`}>
-      <div className={`${viewMode === 'list' ? 'w-32 h-32 flex-shrink-0' : 'aspect-square mb-3'} bg-gray-100 rounded-lg overflow-hidden relative`}>
+      className={`relative group clay-card overflow-hidden block ${viewMode === 'list' ? 'flex flex-row p-4 gap-6' : 'flex flex-col p-3'}`}>
+      
+      {/* Image Container with Airbnb-style aspect ratio and rounded corners */}
+      <div className={`${viewMode === 'list' ? 'w-48 h-48' : 'aspect-[3/4]'} bg-gray-100 rounded-xl overflow-hidden relative`}>
         <img
-          src={product.image_url || `https://picsum.photos/seed/${product.id}/400/400`}
+          src={product.image_url || `https://picsum.photos/seed/${product.id}/400/600`}
           alt={product.title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         />
+        
+        {/* Glassmorphism Favorite Button */}
+        <button className="absolute top-3 right-3 p-2 rounded-full glass-panel hover:bg-white/90 transition-colors z-10 text-gray-700 hover:text-red-500">
+          <FiHeart className="w-5 h-5" />
+        </button>
+
         {discount > 0 && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-medium">
+          <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-bold shadow-sm uppercase tracking-wide">
             -{discount}%
           </span>
         )}
       </div>
-      <div className="flex-1">
-        {product.brand && (
-          <p className="text-xs text-vikas-blue font-medium mb-0.5">{product.brand}</p>
-        )}
-        <h3 className="text-sm font-medium line-clamp-2 mb-1 text-gray-800">{product.title}</h3>
-        <div className="flex items-center gap-1 text-xs mb-1">
-          <div className="flex items-center bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs font-medium">
-            <FiStar className="w-3 h-3 mr-0.5 fill-current" /> {product.rating || '0'}
+
+      {/* Content */}
+      <div className={`mt-3 ${viewMode === 'list' ? 'flex-1 py-2' : ''}`}>
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-[16px] font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+              {product.title}
+            </h3>
+            <p className="text-sm text-gray-500 mt-0.5">{product.brand || 'Luxury Brand'}</p>
           </div>
-          <span className="text-gray-400">({product.rating_count || 0})</span>
+          <div className="flex items-center gap-1 text-sm font-medium text-gray-900">
+            <FiStar className="w-3.5 h-3.5 fill-current text-black" />
+            <span>{product.rating || '4.8'}</span>
+          </div>
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-vikas-dark">₹{parseFloat(product.price).toLocaleString()}</span>
-          {product.original_price && (
-            <span className="text-xs text-gray-400 line-through">₹{parseFloat(product.original_price).toLocaleString()}</span>
-          )}
+        
+        <div className="mt-2 flex items-baseline gap-2">
+           <span className="text-[15px] text-gray-900 font-semibold">
+             ₹{parseFloat(product.price).toLocaleString()}
+             <span className="font-normal text-gray-500 text-sm ml-1">night</span>
+           </span>
+           {product.original_price && (
+             <span className="text-xs text-gray-400 line-through decoration-gray-400">
+               ₹{parseFloat(product.original_price).toLocaleString()}
+             </span>
+           )}
         </div>
+        
+        {/* Claymorphism Tags - only show in list or spacious view */}
+        {viewMode === 'list' && (
+           <div className="mt-4 flex gap-2">
+             <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">Free cancellation</span>
+             <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">Instant Book</span>
+           </div>
+        )}
       </div>
     </Link>
   );

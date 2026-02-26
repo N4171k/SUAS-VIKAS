@@ -139,16 +139,27 @@ const seed = async () => {
     }
     console.log(`✅ ${createdCount} total products created from fashion.csv`);
 
-    // Create inventory (each store gets random stock for each product)
+    // Create inventory (each store gets random stock for each product, with a random size)
+    const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+    const FOOTWEAR_SIZES = ['6', '7', '8', '9', '10', '11', '12'];
+
     const inventoryRecords = [];
     for (const store of stores) {
       for (const product of allCreated) {
-        inventoryRecords.push({
-          store_id: store.id,
-          product_id: product.id,
-          quantity: Math.floor(Math.random() * 50) + 5,
-          reserved_quantity: 0,
-        });
+        const isFootwear = (product.category || '').toLowerCase().includes('footwear');
+        const sizePool = isFootwear ? FOOTWEAR_SIZES : CLOTHING_SIZES;
+        // Assign 1–3 random sizes per store-product combo
+        const numSizes = Math.floor(Math.random() * 3) + 1;
+        const shuffled = [...sizePool].sort(() => Math.random() - 0.5).slice(0, numSizes);
+        for (const size of shuffled) {
+          inventoryRecords.push({
+            store_id: store.id,
+            product_id: product.id,
+            size,
+            quantity: Math.floor(Math.random() * 30) + 5,
+            reserved_quantity: 0,
+          });
+        }
       }
     }
 

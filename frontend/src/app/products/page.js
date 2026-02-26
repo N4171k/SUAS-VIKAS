@@ -87,14 +87,14 @@ function ProductsContent() {
       <div className="mb-6">
         <div className="flex gap-3">
           <input type="text" value={filters.search} onChange={(e) => updateFilter('search', e.target.value)}
-            placeholder="Search products..." className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vikas-blue focus:border-transparent outline-none" />
+            placeholder="Search products..." className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent outline-none" />
           <button onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
             <FiFilter /> Filters
           </button>
           <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-            <button onClick={() => setViewMode('grid')} className={`p-3 ${viewMode === 'grid' ? 'bg-vikas-blue text-white' : 'bg-white'}`}><FiGrid /></button>
-            <button onClick={() => setViewMode('list')} className={`p-3 ${viewMode === 'list' ? 'bg-vikas-blue text-white' : 'bg-white'}`}><FiList /></button>
+            <button onClick={() => setViewMode('grid')} className={`p-3 ${viewMode === 'grid' ? 'bg-gray-900 text-white' : 'bg-white'}`}><FiGrid /></button>
+            <button onClick={() => setViewMode('list')} className={`p-3 ${viewMode === 'list' ? 'bg-gray-900 text-white' : 'bg-white'}`}><FiList /></button>
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@ function ProductsContent() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">Filters</h3>
-            <button onClick={clearFilters} className="text-sm text-vikas-orange hover:underline">Clear All</button>
+            <button onClick={clearFilters} className="text-sm text-red-500 hover:underline">Clear All</button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <select value={filters.category} onChange={(e) => updateFilter('category', e.target.value)}
@@ -194,7 +194,7 @@ function ProductsContent() {
       ) : products.length === 0 ? (
         <div className="text-center py-16">
           <p className="text-gray-500 text-lg mb-4">No products found</p>
-          <button onClick={clearFilters} className="text-vikas-blue hover:underline">Clear filters</button>
+          <button onClick={clearFilters} className="text-red-500 hover:underline">Clear filters</button>
         </div>
       ) : (
         <div className={`grid ${viewMode === 'grid' ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-1'} gap-4`}>
@@ -206,7 +206,7 @@ function ProductsContent() {
                   alt={product.title} className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="flex-1">
-                <p className="text-xs text-vikas-blue font-medium mb-1">{product.brand}</p>
+                <p className="text-xs text-red-500 font-medium mb-1">{product.brand}</p>
                 <h3 className="text-sm font-medium line-clamp-2 mb-1">{product.title}</h3>
                 <div className="flex flex-wrap gap-1 mb-1">
                   {product.gender && <span className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">{product.gender}</span>}
@@ -236,7 +236,7 @@ function ProductsContent() {
         <div className="flex justify-center gap-2 mt-8">
           {Array.from({ length: Math.min(pagination.totalPages, 10) }, (_, i) => i + 1).map((p) => (
             <button key={p} onClick={() => setFilters((prev) => ({ ...prev, page: p }))}
-              className={`w-10 h-10 rounded-lg text-sm font-medium ${p === pagination.page ? 'bg-vikas-blue text-white' : 'bg-white border border-gray-200 hover:bg-gray-50'}`}>
+              className={`w-10 h-10 rounded-lg text-sm font-medium ${p === pagination.page ? 'bg-gray-900 text-white' : 'bg-white border border-gray-200 hover:bg-gray-50'}`}>
               {p}
             </button>
           ))}

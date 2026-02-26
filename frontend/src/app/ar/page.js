@@ -1,101 +1,191 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { FiCamera, FiAlertCircle } from 'react-icons/fi';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import styles from './page.module.css';
+
+// Dynamically import ARView to avoid SSR issues with browser APIs (camera, window, canvas)
+const ARView = dynamic(() => import('../../../components/ARView'), {
+    ssr: false,
+    loading: () => <div className={styles.loadingOverlay}>Loading AR Engine...</div>
+});
 
 export default function ARPage() {
-  return (
-    <Suspense fallback={<div className="max-w-4xl mx-auto px-4 py-8 text-center"><div className="animate-pulse">Loading AR...</div></div>}>
-      <ARContent />
-    </Suspense>
-  );
-}
+    const [activeExperience, setActiveExperience] = useState(null);
+    const [showBanner, setShowBanner] = useState(true);
+    const [showPopup, setShowPopup] = useState(false);
 
-function ARContent() {
-  const searchParams = useSearchParams();
-  const productId = searchParams.get('productId');
-  const [cameraActive, setCameraActive] = useState(false);
-  const [error, setError] = useState(null);
+    useEffect(() => {
+        // Check if user has seen the popup before
+        const hasSeenPopup = localStorage.getItem('ar-popup-seen');
+        if (!hasSeenPopup) {
+            setShowPopup(true);
+        }
 
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-      const video = document.getElementById('ar-video');
-      if (video) {
-        video.srcObject = stream;
-        setCameraActive(true);
-      }
-    } catch (err) {
-      setError('Camera access denied. Please allow camera permissions in your browser.');
-    }
-  };
+        // Check if user has dismissed the banner
+        const bannerDismissed = localStorage.getItem('ar-banner-dismissed');
+        if (bannerDismissed) {
+            setShowBanner(false);
+        }
+    }, []);
 
-  const stopCamera = () => {
-    const video = document.getElementById('ar-video');
-    if (video?.srcObject) {
-      video.srcObject.getTracks().forEach((t) => t.stop());
-      video.srcObject = null;
-    }
-    setCameraActive(false);
-  };
+    const handleCloseBanner = () => {
+        setShowBanner(false);
+        localStorage.setItem('ar-banner-dismissed', 'true');
+    };
 
-  useEffect(() => {
-    return () => stopCamera();
-  }, []);
+    const handleClosePopup = () => {
+        setShowPopup(false);
+        localStorage.setItem('ar-popup-seen', 'true');
+    };
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-2">AR Try-On</h1>
-      <p className="text-gray-500 mb-6">Try products virtually using your camera with Mediapipe face tracking.</p>
+    return (
+        <div className={styles.page}>
+            {/* Context Banner */}
+            {showBanner && (
+                <div className={styles.banner}>
+                    <div className={styles.bannerContent}>
+                        <div className={styles.bannerText}>
+                            <span className={styles.bannerIcon}>ℹ️</span>
+                            <span>
+                                <strong>Local Mode Required:</strong> This AR feature only works by running the app locally.
+                                Please clone the repository from{' '}
+                                <a
+                                    href="https://github.com/N4171k/vikas"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.bannerLink}
+                                >
+                                    GitHub
+                                </a>
+                            </span>
+                        </div>
+                        <button
+                            className={styles.bannerClose}
+                            onClick={handleCloseBanner}
+                            aria-label="Close banner"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            )}
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
-          <FiAlertCircle /> {error}
+            {/* Context Popup */}
+            {showPopup && (
+                <div className={styles.popupOverlay} onClick={handleClosePopup}>
+                    <div className={styles.popup} onClick={(e) => e.stopPropagation()}>
+                        <button
+                            className={styles.popupClose}
+                            onClick={handleClosePopup}
+                            aria-label="Close popup"
+                        >
+                            ×
+                        </button>
+                        <div className={styles.popupIcon}>🚀</div>
+                        <h2 className={styles.popupTitle}>AR Feature - Local Setup Required</h2>
+                        <p className={styles.popupText}>
+                            To experience our Augmented Reality features, you need to run this application locally
+                            on your device. This is because AR requires direct camera access and local processing.
+                        </p>
+                        <div className={styles.popupSteps}>
+                            <h3>Quick Setup:</h3>
+                            <ol>
+                                <li>Clone the repository from GitHub</li>
+                                <li>Install dependencies and run locally</li>
+                                <li>Allow camera permissions when prompted</li>
+                            </ol>
+                        </div>
+                        <a
+                            href="https://github.com/N4171k/vikas"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.popupButton}
+                        >
+                            Visit GitHub Repository
+                        </a>
+                        <button
+                            className={styles.popupButtonSecondary}
+                            onClick={handleClosePopup}
+                        >
+                            Got It, Continue
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Main Selection Screen */}
+            <div className={styles.container}>
+                <div className={styles.header}>
+                    <Link href="/" className={styles.backLink}>← Back to Shop</Link>
+                    <h1>VIKAS AR Beta</h1>
+                    <p>Experience our products in your space using Augmented Reality.</p>
+                </div>
+
+                <div className={styles.grid}>
+                    {/* Experience Card 1: Glasses */}
+                    <div className={styles.card} onClick={() => setActiveExperience('glasses')}>
+                        <div className={styles.cardImage}>
+                            <span className={styles.icon}>👓</span>
+                        </div>
+                        <div className={styles.cardContent}>
+                            <h3>Virtual Glasses</h3>
+                            <p>Try on our latest eyewear collection.</p>
+                            <button className={styles.tryBtn}>Try On</button>
+                        </div>
+                    </div>
+
+                    {/* Experience Card 2: Cap */}
+                    <div className={styles.card} onClick={() => setActiveExperience('cap')}>
+                        <div className={styles.cardImage}>
+                            <span className={styles.icon}>🧢</span>
+                        </div>
+                        <div className={styles.cardContent}>
+                            <h3>Baseball Cap</h3>
+                            <p>See how this cap fits your style.</p>
+                            <button className={styles.tryBtn}>Try On</button>
+                        </div>
+                    </div>
+
+                    {/* Experience Card 3: Knit Cap */}
+                    <div className={styles.card} onClick={() => setActiveExperience('knitcap')}>
+                        <div className={styles.cardImage}>
+                            <span className={styles.icon}>🧶</span>
+                        </div>
+                        <div className={styles.cardContent}>
+                            <h3>Winter Knit Cap</h3>
+                            <p>Perfect for cold days. Try it on!</p>
+                            <button className={styles.tryBtn}>Try On</button>
+                        </div>
+                    </div>
+
+                    {/* Experience Card 4: Glasses v2 */}
+                    <div className={styles.card} onClick={() => setActiveExperience('glasses2')}>
+                        <div className={styles.cardImage}>
+                            <span className={styles.icon}>🕶️</span>
+                        </div>
+                        <div className={styles.cardContent}>
+                            <h3>Designer Glasses</h3>
+                            <p>Exclusive luxury frame try-on.</p>
+                            <button className={styles.tryBtn}>Try On</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.betaNote}>
+                    <span className={styles.badge}>BETA</span>
+                    <p>This is an experimental feature. Performance may vary by device. Please ensure you are in a well-lit area and allow camera permissions.</p>
+                </div>
+            </div>
+
+            {/* Active AR View Overlay */}
+            {activeExperience && (
+                <ARView
+                    modelType={activeExperience}
+                    onClose={() => setActiveExperience(null)}
+                />
+            )}
         </div>
-      )}
-
-      <div className="bg-black rounded-2xl overflow-hidden relative aspect-video mb-6">
-        {cameraActive ? (
-          <video id="ar-video" autoPlay playsInline muted className="w-full h-full object-cover" />
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full text-white">
-            <FiCamera className="w-16 h-16 mb-4 text-gray-400" />
-            <p className="text-gray-400 mb-4">Camera preview will appear here</p>
-            <button onClick={startCamera}
-              className="bg-vikas-orange text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
-              Start Camera
-            </button>
-          </div>
-        )}
-        {cameraActive && (
-          <div className="absolute top-4 right-4 flex gap-2">
-            <span className="bg-red-500 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1">
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span> LIVE
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="flex gap-3">
-        {cameraActive && (
-          <button onClick={stopCamera}
-            className="px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition">
-            Stop Camera
-          </button>
-        )}
-      </div>
-
-      <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
-        <h3 className="font-semibold text-vikas-blue mb-2">How AR Try-On Works</h3>
-        <ol className="list-decimal list-inside text-sm text-gray-600 space-y-1">
-          <li>Select a product (sunglasses, jewelry, accessories)</li>
-          <li>Allow camera access when prompted</li>
-          <li>Mediapipe tracks your face in real-time</li>
-          <li>The product is overlaid on the live video feed</li>
-          <li>Move and turn your head to see from different angles</li>
-        </ol>
-        <p className="text-xs text-gray-500 mt-3">Note: Full AR rendering requires Mediapipe WASM module. This preview demonstrates camera integration.</p>
-      </div>
-    </div>
-  );
+    );
 }

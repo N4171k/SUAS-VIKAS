@@ -62,7 +62,7 @@ export default function AdminPage() {
       <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-8 w-fit">
         {tabs.map((tab) => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition ${activeTab === tab.id ? 'bg-white shadow-sm text-vikas-dark' : 'text-gray-500 hover:text-gray-700'}`}>
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition ${activeTab === tab.id ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
             {tab.icon} {tab.label}
           </button>
         ))}
@@ -98,7 +98,7 @@ export default function AdminPage() {
                         <span className="text-sm capitalize text-gray-600">{item.status}</span>
                         <div className="flex items-center gap-2">
                           <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-vikas-blue rounded-full" style={{ width: `${Math.min(100, (item.count / Math.max(...(analytics?.reservationsByStatus || []).map(r => r.count), 1)) * 100)}%` }}></div>
+                            <div className="h-full bg-gray-900 rounded-full" style={{ width: `${Math.min(100, (item.count / Math.max(...(analytics?.reservationsByStatus || []).map(r => r.count), 1)) * 100)}%` }}></div>
                           </div>
                           <span className="text-sm font-medium w-8 text-right">{item.count}</span>
                         </div>
@@ -126,7 +126,7 @@ export default function AdminPage() {
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     {(analytics?.activeReservationsPerStore || []).map((item, i) => (
                       <div key={i} className="text-center p-4 bg-gray-50 rounded-lg">
-                        <p className="text-2xl font-bold text-vikas-blue">{item.count}</p>
+                        <p className="text-2xl font-bold text-red-500">{item.count}</p>
                         <p className="text-xs text-gray-500 mt-1">{item.storeName}</p>
                       </div>
                     ))}
@@ -156,7 +156,7 @@ export default function AdminPage() {
                 </div>
                 <div className="p-4 bg-blue-50 rounded-lg">
                   <p className="text-sm text-gray-500">This Week</p>
-                  <p className="text-2xl font-bold text-vikas-blue">₹{parseFloat(analytics?.overview?.weekRevenue || 0).toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-red-500">₹{parseFloat(analytics?.overview?.weekRevenue || 0).toLocaleString()}</p>
                 </div>
               </div>
             </div>

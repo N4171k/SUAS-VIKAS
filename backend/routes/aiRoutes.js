@@ -9,11 +9,10 @@ const router = express.Router();
 // POST /api/ai/query - Search products & return context for client-side AI (Puter.js)
 router.post('/query', optionalAuth, async (req, res, next) => {
   try {
-    console.log('[AI Query] body:', JSON.stringify(req.body), 'type:', typeof req.body);
-    const message = req.body?.message || req.body?.query || (typeof req.body === 'string' ? (() => { const p = JSON.parse(req.body); return p.message || p.query; })() : null);
+    const { message } = req.body;
 
     if (!message) {
-      return res.status(400).json({ error: 'Message is required.', receivedBody: typeof req.body, keys: Object.keys(req.body || {}) });
+      return res.status(400).json({ error: 'Message is required.' });
     }
 
     // Fetch catalog summary so AI knows what the store carries

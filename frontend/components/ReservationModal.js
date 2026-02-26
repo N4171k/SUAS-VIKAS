@@ -44,12 +44,12 @@ export default function ReservationModal({ product, store, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-lg font-bold">Click & Collect Reservation</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded"><FiX /></button>
+          <h2 className="text-lg font-bold text-gray-900">Click &amp; Collect Reservation</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors"><FiX size={18} /></button>
         </div>
 
         {success ? (
@@ -68,7 +68,7 @@ export default function ReservationModal({ product, store, onClose }) {
               <p><strong>Slot:</strong> {`${dateStr} ${selectedSlot}`}</p>
               <p><strong>Quantity:</strong> {quantity}</p>
             </div>
-            <button onClick={onClose} className="mt-6 bg-vikas-blue text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-800 transition">
+            <button onClick={onClose} className="mt-6 bg-gray-900 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-gray-800 transition">
               Done
             </button>
           </div>
@@ -82,13 +82,13 @@ export default function ReservationModal({ product, store, onClose }) {
               </div>
               <div>
                 <p className="font-medium text-sm line-clamp-2">{product.title}</p>
-                <p className="text-vikas-blue font-bold">₹{parseFloat(product.price).toLocaleString()}</p>
+                <p className="text-red-500 font-bold">₹{parseFloat(product.price).toLocaleString()}</p>
               </div>
             </div>
 
             {/* Store */}
             <div className="flex items-center gap-2 text-sm">
-              <FiMapPin className="text-vikas-blue" />
+              <FiMapPin className="text-red-500" />
               <span className="font-medium">{store.store?.name}</span>
               <span className="text-gray-400">— {store.available} in stock</span>
             </div>
@@ -107,7 +107,7 @@ export default function ReservationModal({ product, store, onClose }) {
               <div className="grid grid-cols-3 gap-2">
                 {timeSlots.map((slot) => (
                   <button key={slot} onClick={() => setSelectedSlot(slot)}
-                    className={`px-3 py-2 rounded-lg text-xs font-medium border transition ${selectedSlot === slot ? 'bg-vikas-blue text-white border-vikas-blue' : 'border-gray-200 hover:border-vikas-blue'}`}>
+                    className={`px-3 py-2 rounded-xl text-xs font-medium border transition ${selectedSlot === slot ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50'}`}>
                     {slot}
                   </button>
                 ))}
@@ -126,7 +126,7 @@ export default function ReservationModal({ product, store, onClose }) {
 
             {/* Reserve Button */}
             <button onClick={handleReserve} disabled={loading || !selectedSlot}
-              className="w-full bg-vikas-orange text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition disabled:opacity-50">
+              className="w-full bg-red-500 text-white py-3.5 rounded-xl font-semibold hover:bg-red-600 transition disabled:opacity-50 shadow-lg shadow-red-500/20">
               {loading ? 'Reserving...' : `Reserve — ₹${(parseFloat(product.price) * quantity).toLocaleString()}`}
             </button>
           </div>

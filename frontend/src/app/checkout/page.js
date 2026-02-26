@@ -53,29 +53,29 @@ export default function CheckoutPage() {
             <div className="grid grid-cols-2 gap-4">
               <input type="text" placeholder="Full Name" required value={address.fullName}
                 onChange={(e) => setAddress({ ...address, fullName: e.target.value })}
-                className="col-span-2 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vikas-blue outline-none" />
+                className="col-span-2 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 outline-none" />
               <input type="tel" placeholder="Phone" required value={address.phone}
                 onChange={(e) => setAddress({ ...address, phone: e.target.value })}
-                className="col-span-2 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vikas-blue outline-none" />
+                className="col-span-2 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 outline-none" />
               <input type="text" placeholder="Street Address" required value={address.street}
                 onChange={(e) => setAddress({ ...address, street: e.target.value })}
-                className="col-span-2 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vikas-blue outline-none" />
+                className="col-span-2 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 outline-none" />
               <input type="text" placeholder="City" required value={address.city}
                 onChange={(e) => setAddress({ ...address, city: e.target.value })}
-                className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vikas-blue outline-none" />
+                className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 outline-none" />
               <input type="text" placeholder="State" required value={address.state}
                 onChange={(e) => setAddress({ ...address, state: e.target.value })}
-                className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vikas-blue outline-none" />
+                className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 outline-none" />
               <input type="text" placeholder="Pincode" required value={address.pincode}
                 onChange={(e) => setAddress({ ...address, pincode: e.target.value })}
-                className="col-span-2 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-vikas-blue outline-none" />
+                className="col-span-2 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 outline-none" />
             </div>
           </div>
 
           <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
             <h3 className="font-semibold mb-4">Payment Method</h3>
-            <label className="flex items-center gap-3 p-3 border border-vikas-blue rounded-lg bg-blue-50 cursor-pointer">
-              <input type="radio" name="payment" defaultChecked className="text-vikas-blue" />
+            <label className="flex items-center gap-3 p-3 border border-gray-800 rounded-lg bg-blue-50 cursor-pointer">
+              <input type="radio" name="payment" defaultChecked className="text-red-500" />
               <div>
                 <p className="font-medium">Cash on Delivery</p>
                 <p className="text-sm text-gray-500">Pay when you receive your order</p>
@@ -97,7 +97,7 @@ export default function CheckoutPage() {
           <hr className="my-3" />
           <div className="flex justify-between text-lg font-bold mb-4"><span>Total</span><span>₹{total.toLocaleString()}</span></div>
           <button type="submit" disabled={loading || cartItems.length === 0}
-            className="w-full bg-vikas-orange text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition disabled:opacity-50">
+            className="w-full bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition disabled:opacity-50">
             {loading ? 'Placing Order...' : 'Place Order'}
           </button>
         </div>

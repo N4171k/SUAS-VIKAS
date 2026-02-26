@@ -1,7 +1,7 @@
 const express = require('express');
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 const { Product, Inventory, Store } = require('../models');
-const { optionalAuth } = require('../middleware/auth');
+const { optionalAuth, authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -102,6 +102,140 @@ router.get('/meta/brands', async (req, res, next) => {
       order: [['brand', 'ASC']],
     });
     res.json(brands.map((b) => b.brand).filter(Boolean));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ── Size adjacency helpers ──────────────────────────────────────────────────
+const CLOTHING_SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+const FOOTWEAR_SIZE_ORDER = ['5', '6', '7', '8', '9', '10', '11', '12', '13'];
+
+function getAdjacentSizes(size, sizeOrder) {
+  const upper = size ? size.toUpperCase().trim() : '';
+  const idx = sizeOrder.indexOf(upper);
+  if (idx === -1) return [upper]; // unknown size — exact match only
+  const result = new Set();
+  if (idx > 0) result.add(sizeOrder[idx - 1]);
+  result.add(sizeOrder[idx]);
+  if (idx < sizeOrder.length - 1) result.add(sizeOrder[idx + 1]);
+  return Array.from(result);
+}
+
+// GET /api/products/suggestions  — requires auth
+// Returns products matching user's size (±1), colour & style preferences
+// that are actually available in inventory at the right size
+router.get('/suggestions', authenticate, async (req, res, next) => {
+  try {
+    const user = req.user;
+    const limit = Math.min(parseInt(req.query.limit) || 12, 40);
+
+    const {
+      clothing_size,
+      footwear_size,
+      favourite_colors = [],
+      style_preferences = [],
+      gender,
+    } = user;
+
+    // Build the allowed size sets
+    const clothingSizes = clothing_size
+      ? getAdjacentSizes(clothing_size, CLOTHING_SIZE_ORDER)
+      : null;
+    const footwearSizes = footwear_size
+      ? getAdjacentSizes(footwear_size, FOOTWEAR_SIZE_ORDER)
+      : null;
+
+    if (!clothingSizes && !footwearSizes) {
+      // No size preferences set — return top-rated as fallback
+      const fallback = await Product.findAll({
+        where: { is_active: true },
+        order: [['rating', 'DESC'], ['rating_count', 'DESC']],
+        limit,
+      });
+      return res.json({ products: fallback, personalized: false });
+    }
+
+    // Find product IDs that have available inventory in the allowed sizes
+    const sizeConditions = [];
+    if (clothingSizes) sizeConditions.push(...clothingSizes);
+    if (footwearSizes) sizeConditions.push(...footwearSizes);
+
+    const availableInventory = await Inventory.findAll({
+      attributes: ['product_id'],
+      where: {
+        size: { [Op.in]: sizeConditions },
+        [Op.and]: Sequelize.literal('"quantity" - "reserved_quantity" > 0'),
+      },
+      group: ['product_id'],
+      raw: true,
+    });
+
+    const availableProductIds = availableInventory.map((inv) => inv.product_id);
+
+    if (availableProductIds.length === 0) {
+      return res.json({ products: [], personalized: true });
+    }
+
+    // Build product filter based on user preferences
+    const productWhere = {
+      is_active: true,
+      id: { [Op.in]: availableProductIds },
+    };
+
+    const preferenceFilters = [];
+
+    // Gender filter
+    if (gender) {
+      preferenceFilters.push({ gender: { [Op.like]: `%${gender}%` } });
+    }
+
+    // Colour preferences (OR match)
+    if (Array.isArray(favourite_colors) && favourite_colors.length > 0) {
+      favourite_colors.forEach((color) => {
+        if (color) preferenceFilters.push({ colour: { [Op.like]: `%${color}%` } });
+      });
+    }
+
+    // Style / usage preferences (OR match)
+    if (Array.isArray(style_preferences) && style_preferences.length > 0) {
+      style_preferences.forEach((style) => {
+        if (style) {
+          preferenceFilters.push({ usage: { [Op.like]: `%${style}%` } });
+          preferenceFilters.push({ product_type: { [Op.like]: `%${style}%` } });
+          preferenceFilters.push({ sub_category: { [Op.like]: `%${style}%` } });
+        }
+      });
+    }
+
+    if (preferenceFilters.length > 0) {
+      productWhere[Op.or] = preferenceFilters;
+    }
+
+    const products = await Product.findAll({
+      where: productWhere,
+      order: [['rating', 'DESC'], ['rating_count', 'DESC']],
+      limit,
+    });
+
+    // If strict preferences gave < 4 results, pad with general size-available products
+    let finalProducts = products;
+    if (products.length < 4) {
+      const padded = await Product.findAll({
+        where: {
+          is_active: true,
+          id: {
+            [Op.in]: availableProductIds,
+            [Op.notIn]: products.map((p) => p.id),
+          },
+        },
+        order: [['rating', 'DESC'], ['rating_count', 'DESC']],
+        limit: limit - products.length,
+      });
+      finalProducts = [...products, ...padded];
+    }
+
+    res.json({ products: finalProducts, personalized: true });
   } catch (error) {
     next(error);
   }

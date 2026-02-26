@@ -16,6 +16,8 @@ const orderRoutes = require('./routes/orderRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const recommendationRoutes = require('./routes/recommendationRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 // Import models to register associations
 require('./models');
@@ -44,11 +46,8 @@ app.set('io', io);
 app.use(helmet());
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, Vercel serverless, etc.)
+    // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else if (process.env.VERCEL) {
-      // On Vercel, be more permissive (mobile apps, previews, etc.)
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -60,20 +59,11 @@ app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Vercel may pre-parse the body; ensure req.body is always a plain object
-app.use((req, res, next) => {
-  if (req.body && typeof req.body === 'string') {
-    try { req.body = JSON.parse(req.body); } catch (_) {}
-  }
-  if (Buffer.isBuffer(req.body)) {
-    try { req.body = JSON.parse(req.body.toString()); } catch (_) {}
-  }
-  next();
-});
-
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/payment', paymentRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reservations', reservationRoutes);
@@ -121,14 +111,8 @@ const startServer = async () => {
   }
 };
 
-if (process.env.VERCEL) {
-  // On Vercel: connect DB eagerly (no server.listen needed)
-  connectDB()
-    .then(() => sequelize.sync({ alter: true }))
-    .then(() => console.log('✅ Vercel: DB connected & synced'))
-    .catch((err) => console.error('❌ Vercel DB init failed:', err.message));
-} else {
-  // Local development: start HTTP server
+// Only start the HTTP server when running locally (not on Vercel)
+if (!process.env.VERCEL) {
   startServer();
 }
 

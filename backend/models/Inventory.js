@@ -25,12 +25,17 @@ const Inventory = sequelize.define('Inventory', {
     defaultValue: 0,
     validate: { min: 0 },
   },
+  size: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    comment: 'Clothing size: XS, S, M, L, XL, XXL, XXXL, or shoe size like 6-12',
+  },
 }, {
   tableName: 'VIKAS-inventory',
   timestamps: true,
   underscored: true,
   indexes: [
-    { unique: true, fields: ['store_id', 'product_id'] },
+    { unique: true, fields: ['store_id', 'product_id', 'size'] },
   ],
 });
 

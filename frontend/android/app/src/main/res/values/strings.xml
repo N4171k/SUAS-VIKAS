@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">VIKAS</string>
+    <string name="title_activity_main">VIKAS</string>
+    <string name="package_name">com.vikas.shopping</string>
+    <string name="custom_url_scheme">com.vikas.shopping</string>
+</resources>

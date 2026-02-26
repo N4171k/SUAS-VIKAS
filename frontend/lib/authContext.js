@@ -74,8 +74,16 @@ export function AuthProvider({ children }) {
     } catch { /* token expired */ logout(); }
   }, [token, logout]);
 
+  const updatePreferences = useCallback(async (preferences) => {
+    const res = await api.patch('/auth/preferences', preferences);
+    const usr = res.data.user;
+    localStorage.setItem('vikas_user', JSON.stringify(usr));
+    setUser(usr);
+    return usr;
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout, refreshUser, isAdmin: user?.role === 'admin', isStoreAdmin: user?.role === 'store_admin' }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, refreshUser, updatePreferences, isAdmin: user?.role === 'admin', isStoreAdmin: user?.role === 'store_admin' }}>
       {children}
     </AuthContext.Provider>
   );
