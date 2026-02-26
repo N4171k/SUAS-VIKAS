@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout - VIKAS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#137fec",
+                        "primary-content": "#ffffff",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a", 
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased min-h-screen">
+<header class="sticky top-0 z-50 w-full border-b border-border-light dark:border-border-dark bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="bg-primary/10 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-[24px]">shopping_cart_checkout</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">VIKAS <span class="text-slate-500 font-normal">Checkout</span></h1>
+</div>
+<div class="flex items-center gap-4 text-sm font-medium text-slate-500">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+<span>Cart</span>
+</div>
+<div class="w-8 h-px bg-slate-200 dark:bg-slate-700"></div>
+<div class="flex items-center gap-2 text-primary">
+<span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs">2</span>
+<span>Details</span>
+</div>
+<div class="w-8 h-px bg-slate-200 dark:bg-slate-700"></div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="w-6 h-6 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs">3</span>
+<span>Complete</span>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+<div class="lg:col-span-7 flex flex-col gap-8">
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
+<div class="p-6 border-b border-border-light dark:border-border-dark flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 text-[24px]">local_shipping</span>
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">Shipping Address</h2>
+</div>
+</div>
+<div class="p-6">
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="md:col-span-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" for="fullname">Full Name</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5" id="fullname" name="fullname" placeholder="Rahul Sharma" type="text" value="Rahul Sharma"/>
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" for="address">Address Line</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5" id="address" name="address" placeholder="Flat No, Building, Street" type="text" value="B-402, Skyline Apartments, Main Road"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" for="city">City</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5" id="city" name="city" placeholder="Mumbai" type="text" value="Mumbai"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" for="pincode">Pincode</label>
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5" id="pincode" name="pincode" placeholder="400001" type="text" value="400053"/>
+</div>
+<div class="md:col-span-2 pt-2">
+<label class="inline-flex items-center">
+<input checked="" class="rounded border-slate-300 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" type="checkbox"/>
+<span class="ml-2 text-sm text-slate-600 dark:text-slate-400">Save this address for future orders</span>
+</label>
+</div>
+</form>
+</div>
+</section>
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
+<div class="p-6 border-b border-border-light dark:border-border-dark">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 text-[24px]">payments</span>
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">Payment Method</h2>
+</div>
+</div>
+<div class="p-6">
+<div class="space-y-4">
+<label class="relative flex items-center p-4 rounded-xl border-2 border-primary bg-primary/5 cursor-pointer">
+<input checked="" class="h-4 w-4 text-primary border-slate-300 focus:ring-primary" name="payment" type="radio"/>
+<span class="ml-4 flex-1 flex items-center gap-3">
+<span class="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">money</span>
+</span>
+<span class="block text-sm font-medium text-slate-900 dark:text-white">Cash on Delivery</span>
+</span>
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</label>
+<label class="relative flex items-center p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer opacity-60">
+<input class="h-4 w-4 text-slate-300 border-slate-300 focus:ring-primary" disabled="" name="payment" type="radio"/>
+<span class="ml-4 flex-1 flex items-center gap-3">
+<span class="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">credit_card</span>
+</span>
+<span class="block text-sm font-medium text-slate-900 dark:text-white">Credit / Debit Card</span>
+</span>
+</label>
+<label class="relative flex items-center p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer opacity-60">
+<input class="h-4 w-4 text-slate-300 border-slate-300 focus:ring-primary" disabled="" name="payment" type="radio"/>
+<span class="ml-4 flex-1 flex items-center gap-3">
+<span class="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">account_balance</span>
+</span>
+<span class="block text-sm font-medium text-slate-900 dark:text-white">UPI / Net Banking</span>
+</span>
+</label>
+</div>
+</div>
+</section>
+</div>
+<div class="lg:col-span-5">
+<div class="sticky top-24 flex flex-col gap-6">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-lg">
+<div class="p-6 border-b border-border-light dark:border-border-dark">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">Order Summary</h2>
+<p class="text-sm text-slate-500 mt-1">2 items in cart</p>
+</div>
+<div class="p-6 flex flex-col gap-6">
+<div class="flex gap-4">
+<div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-border-light dark:border-border-dark bg-slate-50">
+<img alt="Headphones" class="h-full w-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgvk5Jl4JOSKrGALuFfDVSswPuwMBq27PDhkD2p3ASfWbx4pjRrT8HpiBLWucvh5yQ7UN29005u365mrpJhokhEtW_UMCyE0Gfm6JaZoG0kN2D4SmbOpbyyWuYIz089ElyQW5v0iLycowmDE6aRz6ENTaQGA2bf61W5LOag3Xg9TzUl59LVkSC3lolQQyYqhGxOw5y9iTfbjh6Rh9WWzKUYqLfXB45FZi3a3t2JASidBzaUubSPdssjfJqVrkWx9o9Gf3l8IjKFXNS"/>
+</div>
+<div class="flex flex-1 flex-col">
+<div>
+<div class="flex justify-between text-base font-medium text-slate-900 dark:text-white">
+<h3>Sony WH-1000XM5</h3>
+<p class="ml-4">₹24,990</p>
+</div>
+<p class="mt-1 text-sm text-slate-500">Black</p>
+</div>
+<div class="flex flex-1 items-end justify-between text-sm">
+<p class="text-slate-500">Qty 1</p>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-border-light dark:border-border-dark bg-slate-50">
+<img alt="Shoes" class="h-full w-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVxzDmyNBzL82o76OdcoHq772SubBfxTMbCGhFxf1ktRKerGH2QAoU42LPKc161XMiqrCLJxzHw1E4V0gC2nWSDqHIlg7M3Kp_wSdJgGXTqIacxnD0vTWG3JxZPUPXZz6-avTITL9GT8RVpITW1_P1ZnUTMWxYdkXleAeLQGSCKNSqe1SsDo6WoQ962nW520nMx3oeraf1iR7v04f7yn4H6ImfTNmGJPmjvDur4vUQ7EmsfVHfygoT_zJs24CM42dY25j0KwT4oTjn"/>
+</div>
+<div class="flex flex-1 flex-col">
+<div>
+<div class="flex justify-between text-base font-medium text-slate-900 dark:text-white">
+<h3>Nike Air Max 270</h3>
+<p class="ml-4">₹12,495</p>
+</div>
+<p class="mt-1 text-sm text-slate-500">Red / US 9</p>
+</div>
+<div class="flex flex-1 items-end justify-between text-sm">
+<p class="text-slate-500">Qty 1</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800/50 p-6 border-t border-border-light dark:border-border-dark">
+<div class="flex justify-between text-sm text-slate-600 dark:text-slate-400 mb-2">
+<p>Subtotal</p>
+<p class="font-medium text-slate-900 dark:text-white">₹37,485</p>
+</div>
+<div class="flex justify-between text-sm text-slate-600 dark:text-slate-400 mb-2">
+<p>Shipping</p>
+<p class="font-medium text-emerald-600">Free</p>
+</div>
+<div class="flex justify-between text-sm text-slate-600 dark:text-slate-400 mb-4">
+<p>GST (18%)</p>
+<p class="font-medium text-slate-900 dark:text-white">₹6,747</p>
+</div>
+<div class="border-t border-slate-200 dark:border-slate-700 pt-4 flex justify-between items-center">
+<div>
+<p class="text-base font-bold text-slate-900 dark:text-white">Total</p>
+<p class="text-xs text-slate-500">Including all taxes</p>
+</div>
+<p class="text-xl font-bold text-primary">₹44,232</p>
+</div>
+<button class="w-full mt-6 bg-primary hover:bg-primary/90 text-white font-semibold py-3.5 px-4 rounded-lg shadow-md transition-colors flex items-center justify-center gap-2 group">
+<span>Place Order</span>
+<span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<div class="mt-4 flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+                                Secure Checkout with 256-bit Encryption
+                            </div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-border-light dark:border-border-dark flex items-center gap-3">
+<div class="p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 rounded-lg">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<p class="text-xs font-medium text-slate-700 dark:text-slate-300">Buyer Protection</p>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-border-light dark:border-border-dark flex items-center gap-3">
+<div class="p-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 rounded-lg">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<p class="text-xs font-medium text-slate-700 dark:text-slate-300">Fast Delivery</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

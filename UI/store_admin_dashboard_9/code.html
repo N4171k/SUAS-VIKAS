@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VIKAS - Shopping Cart</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#137fec",
+                        "primary-content": "#ffffff",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a", 
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b", 
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark shadow-sm">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="h-8 w-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-lg">V</div>
+<span class="text-lg font-bold text-slate-900 dark:text-white">VIKAS</span>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Categories</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Deals</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Orders</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+<span class="material-symbols-outlined">search</span>
+</button>
+<div class="relative">
+<button class="text-primary">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">3</span>
+</div>
+<div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDgcYgTJw0r1PKSIE4rgYvXBJjA0n2PKdPQTpJJtZXb9aG1OK_216GYM38xHwQ22VQFGiGNdwa8_8c9m3MLChGy8G6ShR9m8K6vLPfPu9Jv5MAkNe9r-f3tunx9yzfQe1z5RkAc06l3yUxA3MAMl8YaFD3y_Cr4O0wndWcO6GFS0CgdrgstIpIWkPtXMvs3KhfN-Di4uowd-EOD9X4RYYLj0Ymvc8FRvm8R5Pc_m1c3BrNTWZu0t-mUCp8jMOGz7hETVggCwpqfc6xW");'></div>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+<div class="mb-8">
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white">Shopping Cart</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Review your items and proceed to checkout.</p>
+</div>
+<div class="lg:grid lg:grid-cols-12 lg:gap-8">
+<div class="lg:col-span-8 flex flex-col gap-6">
+<div class="flex items-center justify-between pb-4 border-b border-border-light dark:border-border-dark">
+<span class="text-sm font-medium text-slate-900 dark:text-white">3 Items in your cart</span>
+<button class="text-sm text-red-500 hover:text-red-600 font-medium">Clear Cart</button>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 sm:p-6 shadow-sm border border-border-light dark:border-border-dark flex flex-col sm:flex-row gap-6">
+<div class="h-24 w-24 sm:h-32 sm:w-32 flex-shrink-0 overflow-hidden rounded-lg border border-border-light dark:border-border-dark bg-white">
+<div class="h-full w-full bg-contain bg-center bg-no-repeat" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAS_4bbZg6W8ylRtv_CoBXKlCxwG1IgroNUw7qVSBkJ8BBgljcdDVdoxDEMgNDFtna4E-t5lMN-z8I10U0b5fvhTvpgQ_1cxfbM8s333x4XZ0XV2t8wZPCRQlPcVzsmPhkbVlWqkrvL5YrciCx5xpAVZNUNOf7SKljp3EJ-FwUgKJnwuQc5WY5qOEXHqnvfrNSQ4FriERpxzOMq22VWzBaal0piyHLmBeDCyXYU0wSvrCKIBUQS6XUe0JI_PUW6wSiBV2FWX8s-uxT1");'></div>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-lg font-semibold text-slate-900 dark:text-white">Sony WH-1000XM5 Wireless Headphones</h3>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Color: Black</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Seller: AudioWorld Inc.</p>
+</div>
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="flex justify-between items-end mt-4">
+<div class="flex items-center border border-border-light dark:border-border-dark rounded-lg">
+<button class="px-3 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors rounded-l-lg">-</button>
+<input class="w-10 text-center border-0 bg-transparent text-sm font-medium text-slate-900 dark:text-white focus:ring-0 p-0" readonly="" type="text" value="1"/>
+<button class="px-3 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors rounded-r-lg">+</button>
+</div>
+<div class="text-right">
+<span class="block text-lg font-bold text-slate-900 dark:text-white">₹29,990</span>
+<span class="text-xs text-slate-400 line-through">₹34,990</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-4 border border-indigo-100 dark:border-indigo-800/50 flex items-center gap-4 relative overflow-hidden">
+<div class="absolute -right-4 -top-4 opacity-10 rotate-12">
+<span class="material-symbols-outlined text-[100px] text-indigo-600">auto_awesome</span>
+</div>
+<div class="bg-white dark:bg-indigo-900 p-2 rounded-full shadow-sm text-indigo-600 dark:text-indigo-300">
+<span class="material-symbols-outlined text-[24px]">smart_toy</span>
+</div>
+<div class="flex-1 z-10">
+<h4 class="text-sm font-bold text-indigo-900 dark:text-indigo-100 flex items-center gap-2">
+                            VIKAS Suggestion
+                            <span class="bg-indigo-600 text-white text-[10px] px-1.5 py-0.5 rounded uppercase tracking-wider">Smart add-on</span>
+</h4>
+<p class="text-xs text-indigo-700 dark:text-indigo-300 mt-1">Users who bought Sony WH-1000XM5 often buy a protective travel case. Save 15% if added now.</p>
+</div>
+<button class="z-10 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-colors whitespace-nowrap shadow-sm">
+                        Add for ₹899
+                    </button>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 sm:p-6 shadow-sm border border-border-light dark:border-border-dark flex flex-col sm:flex-row gap-6">
+<div class="h-24 w-24 sm:h-32 sm:w-32 flex-shrink-0 overflow-hidden rounded-lg border border-border-light dark:border-border-dark bg-white">
+<div class="h-full w-full bg-contain bg-center bg-no-repeat" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAIejsnQPXjT0g4-6gOxFlTVyQ35iBkRAiiSVgAj85Ct31lA3BLxiORVf8ec1kWquJOO6AsBSMnC4ieED3OOwetCesJLZYT2NNTVlcTSC01XA9UnAHtP3K_A6PrauIwfyHe8OwVqZ-jp1NuTFEJ9WJUjOnMNZikFSZYX2F8p_DEi85QhQQxcDnDXAgvER2pE97XLxkxWeh1SIM4aAybmCYJU0hJClhgO_R1zB-LBFlcBtx5dlbXLBaA1gawgezT299n7VmyOKTf04Xb");'></div>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-lg font-semibold text-slate-900 dark:text-white">iPhone 15 Pro (Titanium)</h3>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Storage: 256GB • Finish: Natural Titanium</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Seller: Apple Official Store</p>
+</div>
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="flex justify-between items-end mt-4">
+<div class="flex items-center border border-border-light dark:border-border-dark rounded-lg">
+<button class="px-3 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors rounded-l-lg">-</button>
+<input class="w-10 text-center border-0 bg-transparent text-sm font-medium text-slate-900 dark:text-white focus:ring-0 p-0" readonly="" type="text" value="1"/>
+<button class="px-3 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors rounded-r-lg">+</button>
+</div>
+<div class="text-right">
+<span class="block text-lg font-bold text-slate-900 dark:text-white">₹1,34,900</span>
+<span class="text-xs text-green-600 font-medium">In Stock</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 sm:p-6 shadow-sm border border-border-light dark:border-border-dark flex flex-col sm:flex-row gap-6 opacity-75">
+<div class="h-24 w-24 sm:h-32 sm:w-32 flex-shrink-0 overflow-hidden rounded-lg border border-border-light dark:border-border-dark bg-white relative">
+<div class="h-full w-full bg-contain bg-center bg-no-repeat opacity-50" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDZPEoKTgZbn8L0Vrb5bJAvuNA4U22SmWbHF-10IyHVNBzX3Vr5Q8MLi5nyTLdw0m1Z0bXLz8SrBK81RRVi4CFApp9Tjm6as1legjefxBS1PSCOrZPgv-MtWkkGhq3PGZZiBU7XiSrhqSekGrnN2Yj1SodPa0-Zr3XyRpYFVQ-j0ko18dnG0WJGO9cfr-f8yV9spQIqD2PTJohzN1xe3GshAK88n9_lBEJAKwBA-qvynp8mWNN0W-Y4spOdYIzwaR_wmKDoXd-Avilf");'></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="bg-slate-800 text-white text-xs px-2 py-1 rounded">Low Stock</span>
+</div>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-lg font-semibold text-slate-900 dark:text-white">Nike Air Zoom Pegasus 39</h3>
+<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Size: 9 UK • Color: Red</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Seller: Nike Sportswear</p>
+</div>
+<button class="text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="flex justify-between items-end mt-4">
+<div class="flex items-center border border-border-light dark:border-border-dark rounded-lg">
+<button class="px-3 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors rounded-l-lg">-</button>
+<input class="w-10 text-center border-0 bg-transparent text-sm font-medium text-slate-900 dark:text-white focus:ring-0 p-0" readonly="" type="text" value="1"/>
+<button class="px-3 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors rounded-r-lg">+</button>
+</div>
+<div class="text-right">
+<span class="block text-lg font-bold text-slate-900 dark:text-white">₹10,495</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 mt-8 lg:mt-0">
+<div class="sticky top-24 bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Order Summary</h2>
+<div class="space-y-4 text-sm">
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Subtotal (3 items)</span>
+<span class="font-medium text-slate-900 dark:text-white">₹1,75,385</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Discount</span>
+<span class="font-medium text-green-600">-₹5,000</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Delivery Fee</span>
+<span class="font-medium text-green-600">Free</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Tax (18% GST)</span>
+<span class="font-medium text-slate-900 dark:text-white">Included</span>
+</div>
+</div>
+<div class="border-t border-border-light dark:border-border-dark my-6"></div>
+<div class="mb-6">
+<label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Have a coupon?</label>
+<div class="flex gap-2">
+<input class="flex-1 rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-slate-800 text-sm focus:border-primary focus:ring-primary" placeholder="Enter code" type="text"/>
+<button class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors">Apply</button>
+</div>
+<div class="mt-2 flex items-center gap-1.5 text-xs text-green-600">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Coupon "VIKAS5000" applied</span>
+</div>
+</div>
+<div class="border-t border-border-light dark:border-border-dark my-6"></div>
+<div class="flex justify-between items-end mb-6">
+<span class="text-base font-semibold text-slate-900 dark:text-white">Total Amount</span>
+<div class="text-right">
+<span class="block text-2xl font-bold text-slate-900 dark:text-white">₹1,70,385</span>
+<span class="text-xs text-slate-500">Including GST</span>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+<span>Proceed to Checkout</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<div class="mt-6 flex items-center justify-center gap-2 text-slate-400 text-xs">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span>Secure Checkout powered by VIKAS</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-auto py-8 border-t border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
+<div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+<p>© 2026 VIKAS Shopping. All rights reserved.</p>
+</div>
+</footer>
+
+</body></html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VIKAS - AI Shopping Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #334155;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex overflow-hidden">
+<!-- Main Content Area (Background Context) -->
+<div class="flex-1 flex flex-col h-screen overflow-hidden relative opacity-40 lg:opacity-100 transition-opacity">
+<!-- Main Header -->
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-6 shrink-0 z-10">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 font-bold text-xl tracking-tight text-primary">
+<span class="material-symbols-outlined filled">shopping_bag</span>
+                    MyShop
+                </div>
+<nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-400">
+<a class="hover:text-primary transition-colors" href="#">Men</a>
+<a class="hover:text-primary transition-colors" href="#">Women</a>
+<a class="text-primary" href="#">Running</a>
+<a class="hover:text-primary transition-colors" href="#">Sale</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-slate-400 text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm w-64 focus:ring-2 focus:ring-primary/50" placeholder="Search products..." type="text"/>
+</div>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+</div>
+</header>
+<!-- Product Grid Mockup -->
+<main class="flex-1 overflow-y-auto p-6 lg:p-10 bg-background-light dark:bg-background-dark custom-scrollbar">
+<div class="max-w-7xl mx-auto">
+<div class="flex items-center justify-between mb-6">
+<h1 class="text-2xl font-bold">Running Shoes</h1>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium bg-white dark:bg-slate-800">
+                            Filter <span class="material-symbols-outlined text-[18px]">filter_list</span>
+</button>
+<button class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium bg-white dark:bg-slate-800">
+                            Sort <span class="material-symbols-outlined text-[18px]">sort</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Product Card 1 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="aspect-[4/3] bg-slate-100 dark:bg-slate-800 relative bg-cover bg-center" data-alt="Red Nike running shoe on yellow background" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAkGafw3k0zXqbrQpA-vTXn9IZNAOk19F-AorQS6euPduMQvRJfYG_FVq9Mk-7yOsGIlfW8J9PMJ-uqKrslEzzC_GgOSeJ8EuD9DcYPiP6luzmyVow_FALieSnkAymYlgomL_JRMjj3oOBKC-P09hitBD9GxQqwJZYxHFhrNELrum0mRh4Qs5V88-W4L5HER3uGoky5yyt6-SFXFPxKYKElRymS04k0CUtiWN8t7hOR9ckY4-BOCpCgt4cZCRgzQW7UkkdZgfSKnZFe')">
+<button class="absolute top-3 right-3 p-1.5 bg-white/80 dark:bg-black/50 backdrop-blur-sm rounded-full hover:bg-white dark:hover:bg-black transition-colors">
+<span class="material-symbols-outlined text-[20px] text-slate-600 dark:text-slate-300">favorite</span>
+</button>
+</div>
+<div class="p-4">
+<h3 class="font-semibold text-slate-900 dark:text-slate-100">Nike Air Max 270</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Men's Running Shoe</p>
+<div class="flex items-center justify-between mt-3">
+<span class="font-bold text-slate-900 dark:text-slate-100">$150.00</span>
+<button class="text-primary text-sm font-medium hover:underline">Add to Bag</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="aspect-[4/3] bg-slate-100 dark:bg-slate-800 relative bg-cover bg-center" data-alt="Grey Adidas running shoe" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCDeGhouoduFlKKqWLHcIOY0UcZd_D1LNArRJh5SOyGLbsbEMlFgZg0q3opP9k_mdI1TeQemC4yJf2_l0tAZ3EziRYynfIpu-0wPOe4ccuReF0p75SqgArEisEFmVKA-b1emfnPPmod4bAA5NszfE-wVfmUJ6txCfTw7qyksyEa8DtYVqtfVAZL1n7Td3_FPKRJBTO6KR4yXk-dUKmE9_p_dBElPPWS4OXyjR4P3WV0wTA4MI7VE7CVlIX_y1l6h1F48nOOhDus56Jz')"></div>
+<div class="p-4">
+<h3 class="font-semibold text-slate-900 dark:text-slate-100">Adidas Ultraboost</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Men's Performance</p>
+<div class="flex items-center justify-between mt-3">
+<span class="font-bold text-slate-900 dark:text-slate-100">$180.00</span>
+<button class="text-primary text-sm font-medium hover:underline">Add to Bag</button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="aspect-[4/3] bg-slate-100 dark:bg-slate-800 relative bg-cover bg-center" data-alt="Green Nike running shoe floating" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJi8VklICHZMngBlWn7Bh2DqH8B3t435ZvsC-PCGNhXLBLpi-c-wcj8vCqNGTb5BOefF8OxsIyZqgDyU5XBo1D5f1WnTss9bPMJVgwylDQi52fIou1d7MhbCdQheRbKdIP-SfvyxeoWwTurmSBhux6BrRc4QMsbe8T2BNfCx374e23VPmQLWGZQ_piIy3hsx7znFELJ83QN5ZEaN3iyytiuoH9Bd-SnP4z8RgOMFP63G_VJSETcj2OcLwurnY9hbibgOemCqMDj8FW')"></div>
+<div class="p-4">
+<h3 class="font-semibold text-slate-900 dark:text-slate-100">Nike Zoom Fly 5</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Men's Racing Shoe</p>
+<div class="flex items-center justify-between mt-3">
+<span class="font-bold text-slate-900 dark:text-slate-100">$160.00</span>
+<button class="text-primary text-sm font-medium hover:underline">Add to Bag</button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="aspect-[4/3] bg-slate-100 dark:bg-slate-800 relative bg-cover bg-center" data-alt="Black running shoe on concrete" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDMzsdFWhyGw__Ne4Jlq5GFiHMK4Zej0Uqm3QHzkW0_L_Qf6j4y3wMT_Uj6FkrNV4Z7jMIxhmSquKmzpvQVuIV4b_-K69PjvPvUmC0SSTvx-Sm5jgh8oNuIG_GL3zD-CnsbK_GStU8zXHNsjcXLVdVzK_wRdyr7LbQ_ZGTAuTN9eAUbPwlj8XGz7z_B0QPXLR0xJHx2yEvB3KzZD_ZWxaT4cSdUXAXI-XAd43CLbgwdHwaA3qg_RhAuLuUOPaPEzgBTt14MSupmNo6J')"></div>
+<div class="p-4">
+<h3 class="font-semibold text-slate-900 dark:text-slate-100">Puma Nitro 2</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Daily Trainer</p>
+<div class="flex items-center justify-between mt-3">
+<span class="font-bold text-slate-900 dark:text-slate-100">$130.00</span>
+<button class="text-primary text-sm font-medium hover:underline">Add to Bag</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- VIKAS Assistant Sidebar -->
+<aside class="fixed inset-y-0 right-0 z-50 w-full sm:w-[420px] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out">
+<!-- Sidebar Header -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-10">
+<div class="flex items-center gap-3">
+<div class="relative flex items-center justify-center size-9 rounded-full bg-gradient-to-br from-primary to-blue-600 text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+<!-- Status Indicator -->
+<span class="absolute bottom-0 right-0 size-2.5 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></span>
+</div>
+<div>
+<h2 class="font-bold text-slate-900 dark:text-slate-100 leading-tight">VIKAS</h2>
+<p class="text-xs font-medium text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">bolt</span>
+                        AI Shopping Assistant
+                    </p>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="size-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors" title="Clear Chat">
+<span class="material-symbols-outlined text-[20px]">restart_alt</span>
+</button>
+<button class="size-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors" title="Close">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</div>
+<!-- Chat Area -->
+<div class="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar scroll-smooth">
+<!-- Date Separator -->
+<div class="flex justify-center mb-6">
+<span class="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">Today, 10:23 AM</span>
+</div>
+<!-- Bot Message (Welcome) -->
+<div class="flex gap-3 mb-6">
+<div class="size-8 shrink-0 rounded-full bg-gradient-to-br from-primary/20 to-blue-400/20 flex items-center justify-center text-primary border border-primary/10 mt-1">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1 max-w-[85%]">
+<span class="text-xs font-medium text-slate-500 ml-1">VIKAS Assistant</span>
+<div class="p-3.5 bg-slate-100 dark:bg-slate-800 rounded-2xl rounded-tl-none text-slate-800 dark:text-slate-200 text-sm leading-relaxed shadow-sm">
+                        Hi Aarav! I can help you find the perfect pair of shoes. Looking for running or casual today?
+                    </div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex flex-row-reverse gap-3 mb-6">
+<div class="size-8 shrink-0 rounded-full bg-cover bg-center border border-slate-200 dark:border-slate-700 mt-1" data-alt="Portrait of Aarav" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCb74IYkABSXQ41wuYUIz3QF18ucvUYDbSIb6LJj2XLgUsLRBbsiWe1f2rpjBwCZG9RrzsRlLASm4GJ_LJcYAKutf0hoRB1Zg9BYWorPIUQo0uSgnHtGM_883mFh6GV45E_3qKydvYp5h49mAcydEgVBPx11piVlGc3haNzkDDdZ_23TCN0qm1FEiYys2VyqWNfN_lComc0bAPHYT56ka-eXbebb62gRIm12v1VWRq2EiIJKsWKJJqIgSH9EKJ25QIXWdXuNeT9MxuX')"></div>
+<div class="flex flex-col gap-1 items-end max-w-[85%]">
+<span class="text-xs font-medium text-slate-500 mr-1">Aarav</span>
+<div class="p-3.5 bg-primary text-white rounded-2xl rounded-tr-none text-sm leading-relaxed shadow-md shadow-primary/10">
+                        I need something comfortable for daily running, preferably Nike or Adidas. Under $150 if possible.
+                    </div>
+</div>
+</div>
+<!-- Bot Message (Response with Cards) -->
+<div class="flex gap-3 mb-4">
+<div class="size-8 shrink-0 rounded-full bg-gradient-to-br from-primary/20 to-blue-400/20 flex items-center justify-center text-primary border border-primary/10 mt-1">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1 max-w-[90%]">
+<span class="text-xs font-medium text-slate-500 ml-1">VIKAS Assistant</span>
+<div class="p-3.5 bg-slate-100 dark:bg-slate-800 rounded-2xl rounded-tl-none text-slate-800 dark:text-slate-200 text-sm leading-relaxed shadow-sm mb-2">
+                        Got it! Daily running shoes under $150 from Nike or Adidas. Here are 3 great options based on your preferences:
+                    </div>
+<!-- Compact Product Cards Container -->
+<div class="flex flex-col gap-2.5">
+<!-- Card 1 -->
+<div class="group flex p-2.5 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
+<div class="size-16 shrink-0 bg-slate-100 dark:bg-slate-700 rounded-lg bg-cover bg-center" data-alt="Nike Air Zoom Pegasus shoe" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDt1b-ddXGPvGbfn3zmV7jeDRwnxZ7rkWZCgjteEPLo5Eqz1YeI4O9scyNKeEs6cugDeIDz9ZiQoBrmnZDBSbO3cIKSNOvKHmfEzWiUsOmkdEyjxfjZYtIckOekic-Soxt8a8teXwEAhSvWim_JKHTn_ZouR8ObFqy0NqjthSaqu7k233zur_k-aGWe0_8jcrSvLro-DZULtD0Hc1EdXvwHL-i3Hsiiyv8p8lJeFj1ZygwK9wGNMC72Qcx3lcw1NG1zOw3QUfq7sM1n')"></div>
+<div class="ml-3 flex-1 flex flex-col justify-center min-w-0">
+<h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 truncate group-hover:text-primary transition-colors">Nike Air Zoom Pegasus</h4>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">$120.00</span>
+<span class="size-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Running</span>
+</div>
+</div>
+<button class="self-center p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+<!-- Card 2 -->
+<div class="group flex p-2.5 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
+<div class="size-16 shrink-0 bg-slate-100 dark:bg-slate-700 rounded-lg bg-cover bg-center" data-alt="Adidas Supernova shoe" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1bNYMe5mSGmNcgTL974mpkG_O-Qal8g122btDhWeKe86L1SJT0Zvr23YUF8lHdr2Nti3lsppiT9DwFa-gNT7aAvKDMMerdTL3N0xK3O7SYtStv6pvyvDsD5-VbQGdzoWKQQUdxGf_ommnb8XZvC4SpEyqycx7AWzs_AuV_CZem1QQqeZArBwdF6sTlxZm2nkd-c16P1Wo-FhJpkFTHSb0NJ25QhKD476gzkYnPyCbz_PdXRWhV1w0y8VkuNCX8a1IawIP8Yl9elFP')"></div>
+<div class="ml-3 flex-1 flex flex-col justify-center min-w-0">
+<h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 truncate group-hover:text-primary transition-colors">Adidas Supernova</h4>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">$100.00</span>
+<span class="size-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Daily</span>
+</div>
+</div>
+<button class="self-center p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+<!-- Card 3 -->
+<div class="group flex p-2.5 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
+<div class="size-16 shrink-0 bg-slate-100 dark:bg-slate-700 rounded-lg bg-cover bg-center" data-alt="Nike Winflo shoe" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBsd-qodTaTDViN8nQDIotkBAJxfCsHif-5GT3sY0WA3qz1ciKUSLxtrwNtj4bbHs2dmdKCI8VcP9iyKvbjRvg7XKZd04I4iPKequj47THaxsEfMRH9KmrTFXDCMBg_jttwdjpAq_4Bg5c9N_Gz645Q7woQ9nxeB3WqZiKNf4L69vzBbltNxUdclEGjH7DryjWS2VIpbJNiJgPg_Ux3LWhqE6HVxDK5WrYLnZHmW1e1v55FLNobjEGvGSQF7EVhOHL4c87qOqlctvHW')"></div>
+<div class="ml-3 flex-1 flex flex-col justify-center min-w-0">
+<h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 truncate group-hover:text-primary transition-colors">Nike Winflo 9</h4>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">$90.00</span>
+<span class="size-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Neutral</span>
+</div>
+</div>
+<button class="self-center p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Thinking Indicator (Subtle) -->
+<div class="flex gap-3 mb-6 opacity-0 animate-pulse hidden">
+<div class="size-8 shrink-0 rounded-full bg-gradient-to-br from-primary/20 to-blue-400/20 flex items-center justify-center text-primary border border-primary/10 mt-1">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<div class="flex items-center gap-1 h-8 px-2">
+<div class="size-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+<div class="size-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+<div class="size-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+</div>
+</div>
+</div>
+<!-- Footer / Input Area -->
+<div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 relative">
+<!-- Quick Prompts (Pills) -->
+<div class="flex gap-2 mb-3 overflow-x-auto no-scrollbar pb-1">
+<button class="whitespace-nowrap px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-medium text-slate-600 dark:text-slate-300 rounded-full transition-colors border border-transparent hover:border-slate-300 dark:hover:border-slate-600">
+                    Compare Pegasus vs Ultraboost
+                </button>
+<button class="whitespace-nowrap px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-medium text-slate-600 dark:text-slate-300 rounded-full transition-colors border border-transparent hover:border-slate-300 dark:hover:border-slate-600">
+                    Show me running socks
+                </button>
+</div>
+<!-- Input Box -->
+<div class="relative group">
+<div class="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-blue-400/30 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+<div class="relative flex items-end gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2 shadow-sm focus-within:ring-1 focus-within:ring-primary/50 focus-within:border-primary">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-[20px]">add_photo_alternate</span>
+</button>
+<textarea class="w-full bg-transparent border-0 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-0 text-sm py-2.5 resize-none max-h-32 custom-scrollbar" placeholder="Ask anything..." rows="1"></textarea>
+<button class="p-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm shadow-primary/30">
+<span class="material-symbols-outlined text-[20px]">send</span>
+</button>
+</div>
+</div>
+<div class="flex justify-center mt-2.5">
+<p class="text-[10px] text-slate-400 flex items-center gap-1">
+                    Powered by VIKAS Intelligence
+                    <span class="size-1 rounded-full bg-slate-300"></span>
+                    LLaMA
+                </p>
+</div>
+</div>
+</aside>
+</body></html>

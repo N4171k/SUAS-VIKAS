@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VIKAS - Product Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-10 py-3 shadow-sm">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-slate-900 dark:text-white">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-2xl">shopping_bag</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight">VIKAS</h2>
+</div>
+<label class="flex flex-col min-w-40 !h-10 max-w-96 w-80 hidden md:flex">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-slate-100 dark:bg-slate-800 border border-transparent focus-within:border-primary transition-colors">
+<div class="text-slate-500 flex border-none items-center justify-center pl-4 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent focus:border-none h-full placeholder:text-slate-500 px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal" placeholder="Search for products, brands and more" value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-slate-700 dark:text-slate-300 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Electronics</a>
+<a class="text-slate-700 dark:text-slate-300 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Fashion</a>
+<a class="text-slate-700 dark:text-slate-300 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Home</a>
+<a class="text-slate-700 dark:text-slate-300 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">Beauty</a>
+<a class="text-primary text-sm font-medium leading-normal" href="#">Offers</a>
+</nav>
+<div class="flex gap-2">
+<button class="flex items-center justify-center overflow-hidden rounded-lg h-10 w-10 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white transition-colors">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="flex items-center justify-center overflow-hidden rounded-lg h-10 w-10 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center overflow-hidden rounded-lg h-10 w-10 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Breadcrumbs -->
+<nav class="flex flex-wrap gap-2 mb-6 text-sm">
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Electronics</a>
+<span class="text-slate-400">/</span>
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Audio</a>
+<span class="text-slate-400">/</span>
+<span class="text-slate-900 dark:text-white font-medium">Sony WH-1000XM5</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12">
+<!-- Left Column: Image Gallery -->
+<div class="lg:col-span-7 flex flex-col gap-4">
+<div class="aspect-[4/3] w-full bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative group">
+<img alt="Sony Headphones Hero" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" data-alt="Sony WH-1000XM5 headphones on a stand" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQZLSxVWkm3FC7uefOl4os2HR2b08KjIIQB26kydYL5Bxf6c7cxGZFHBvOyS4n_BNo8RZ-5wktWvbwjD2sXgfQzfB34_T-M-QGpFfHzlPLLvFQ8fBVmCqnU9YoCw6Ug3o_6q_3C0eeNBfO6Oh0EtbFAvC3tKR1C2I5Dn5OHYVVFmI5nprckk25c7SF_xLZ3PQs1uhDGWUjZxfsDzges3Y0_E5dHn5uqVdjfNTyM2xalAUReXhVWM4uoNWWz6iowE0QuI8MpJ8qogTw"/>
+<button class="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 p-2 rounded-full shadow-lg text-slate-500 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<div class="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 backdrop-blur-md">
+<span class="material-symbols-outlined text-sm">view_in_ar</span>
+                        View in 3D
+                    </div>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<button class="aspect-square rounded-xl border-2 border-primary overflow-hidden bg-white dark:bg-slate-800">
+<img alt="Side view" class="w-full h-full object-cover" data-alt="Headphones side profile view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRv-edD-8_OOd5cYYQwBzyHWNBO6x_lPPf3TwrgmLCqOH7tUd2mNd0taiE5ugm_IH2tv6QoJu0WyAT5MA5PAcJGkkXp1dmPFsCvKqyuBYspT4ldopoq4jeSHX4gNPqZWpeZKtpa4WBbHgIvTkXWiuWw-Ejk3HP_QLSYyJrrZCEHtlWcYoWp5PK8P54eFDsWUyuXLtGL95UhM-V3B1EzVxC9l1eQX3nGeHPyBMeSU_TES_GXiCZVtBeDoFq-9kASFf_eBeV0d3fcp2F"/>
+</button>
+<button class="aspect-square rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-800 hover:border-primary/50 transition-colors">
+<img alt="Lifestyle view" class="w-full h-full object-cover" data-alt="Person wearing headphones outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWHA_ELlLexWDhSq8uejVS02wW4Y-e8tP_1OV-QnrWpIqYEqKBLarcA23RRVb8DVIieH3-w-8Czb7tAA5d7k6rls0oTCnMmWuj8-BT4w9THITKz3zdlqEut_9mL2JA09aCCVau9pRQvntLx1-AAmFW5BynFpknxUgmisljJqYBWWbRa-WN9ZhbYqLDFwzLU42dCG6p4lcyafUo6uXkoh2IC3yJ2zO7KFt6G3Fbkotmm--EVWDhAuio4voYWiGewb-dbHtruaWBA2Pa"/>
+</button>
+<button class="aspect-square rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-800 hover:border-primary/50 transition-colors">
+<img alt="Case view" class="w-full h-full object-cover" data-alt="Headphones inside carry case" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXtvoJbtnVxOvRzwUcFOrJHdmCudknnTlAmWxiAWXH-kbdcjI9R64au4i3AoPNqyPw4aBYbprlHgtj3RE3HOQtemN4mui5fCCuUG8jzf2lcZ0PtSxDo2HyvUq83zWNd1jQgJiWdGjjkdTFmYY1UNVg8JO9pA23rKwD1Am3RyZ_WvTIaLVXq2ACasT2pGhvb0PrZ4YHlVf1YMZVF7_Nxn3bVZ0E_p_bNk4i31MsMfYBIytE8h-CW-eT-Xy90NCb0SQFF0gW0ywVpWdj"/>
+</button>
+<div class="aspect-square rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-slate-500">
+<span class="material-symbols-outlined text-3xl mb-1">add_a_photo</span>
+<span class="text-xs font-medium">See user photos</span>
+</div>
+</div>
+<!-- AR Try-On & AI Chat -->
+<div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- AR Block -->
+<div class="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-800/30 flex items-center justify-between group cursor-pointer hover:shadow-md transition-all">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+<span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400">face</span>
+                                Try with AR
+                            </h3>
+<p class="text-sm text-slate-600 dark:text-slate-400">See how they look on you instantly.</p>
+</div>
+<div class="bg-white dark:bg-slate-800 p-2 rounded-lg shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400">camera_alt</span>
+</div>
+</div>
+<!-- AI Chat Block -->
+<div class="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl p-6 border border-emerald-100 dark:border-emerald-800/30">
+<div class="flex items-center gap-2 mb-3">
+<div class="bg-emerald-100 dark:bg-emerald-900/50 p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined text-xl">smart_toy</span>
+</div>
+<h3 class="font-bold text-slate-900 dark:text-white">Ask VIKAS AI</h3>
+</div>
+<div class="flex flex-col gap-2">
+<button class="text-left text-xs bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2 px-3 rounded-lg border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors">
+                                "Is this good for gym?"
+                            </button>
+<button class="text-left text-xs bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-2 px-3 rounded-lg border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors">
+                                "Compare with Bose QC45"
+                            </button>
+</div>
+</div>
+</div>
+<!-- Description / Details -->
+<div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 mt-4">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Product Highlights</h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">Industry-leading noise cancellation optimized to you</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">Magnificent Sound, engineered to perfection</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">Crystal clear hands-free calling</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+<span class="text-slate-700 dark:text-slate-300">Up to 30-hour battery life with quick charging</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Right Column: Product Info & Purchase Panel -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Main Info Header -->
+<div>
+<h1 class="text-slate-900 dark:text-white text-3xl font-bold leading-tight mb-2">Sony WH-1000XM5 Wireless Noise Cancelling Headphones</h1>
+<div class="flex items-center gap-4 mb-4">
+<div class="flex items-center gap-1">
+<span class="font-bold text-slate-900 dark:text-white">4.8</span>
+<div class="flex text-yellow-400">
+<span class="material-symbols-outlined icon-filled text-sm">star</span>
+<span class="material-symbols-outlined icon-filled text-sm">star</span>
+<span class="material-symbols-outlined icon-filled text-sm">star</span>
+<span class="material-symbols-outlined icon-filled text-sm">star</span>
+<span class="material-symbols-outlined icon-filled text-sm">star_half</span>
+</div>
+<span class="text-sm text-slate-500 underline decoration-slate-300 cursor-pointer ml-1">1,240 reviews</span>
+</div>
+<div class="h-4 w-px bg-slate-300 dark:bg-slate-700"></div>
+<span class="text-sm text-green-600 font-medium">96% recommend this</span>
+</div>
+<div class="flex items-baseline gap-3 mb-2">
+<span class="text-4xl font-bold text-slate-900 dark:text-white">₹24,999</span>
+<span class="text-lg text-slate-500 line-through">₹29,990</span>
+<span class="text-green-600 font-medium bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded text-sm">-17%</span>
+</div>
+<p class="text-xs text-slate-500 mb-6">Inclusive of all taxes. EMI starts at ₹1,213/mo.</p>
+</div>
+<!-- Purchase Card -->
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sticky top-24">
+<!-- Store Availability Badge -->
+<div class="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-lg p-3 mb-6">
+<div class="relative">
+<div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
+<span class="material-symbols-outlined text-green-600 dark:text-green-400 text-2xl">storefront</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-green-800 dark:text-green-300">Available at InOrbit Mall</p>
+<p class="text-xs text-green-700 dark:text-green-400">12 units in stock right now</p>
+</div>
+<button class="text-xs font-semibold text-green-700 dark:text-green-300 underline">Change Store</button>
+</div>
+<!-- Color Selection -->
+<div class="mb-6">
+<span class="text-sm font-medium text-slate-900 dark:text-white mb-3 block">Select Color: <span class="text-slate-500 font-normal">Black</span></span>
+<div class="flex gap-3">
+<button class="w-10 h-10 rounded-full bg-slate-900 border-2 border-primary ring-2 ring-offset-2 ring-primary/20"></button>
+<button class="w-10 h-10 rounded-full bg-slate-200 border border-slate-300 hover:border-slate-400"></button>
+<button class="w-10 h-10 rounded-full bg-blue-900 border border-slate-300 hover:border-slate-400"></button>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-3">
+<button class="w-full bg-primary text-white font-bold h-12 rounded-xl hover:bg-blue-600 active:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20">
+                            Reserve for Pickup
+                            <span class="material-symbols-outlined text-sm">bolt</span>
+</button>
+<div class="grid grid-cols-2 gap-3">
+<button class="w-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold h-12 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+                                Add to Cart
+                            </button>
+<button class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold h-12 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors">
+                                Buy Now
+                            </button>
+</div>
+</div>
+<!-- Delivery Info -->
+<div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-4">
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-slate-400">local_shipping</span>
+<div>
+<p class="text-sm font-medium text-slate-900 dark:text-white">Free Delivery</p>
+<p class="text-xs text-slate-500">By tomorrow, 10 PM if ordered within 2 hrs.</p>
+</div>
+</div>
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-slate-400">verified_user</span>
+<div>
+<p class="text-sm font-medium text-slate-900 dark:text-white">1 Year Warranty</p>
+<p class="text-xs text-slate-500">Official Sony India warranty covers defects.</p>
+</div>
+</div>
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-slate-400">currency_rupee</span>
+<div>
+<p class="text-sm font-medium text-slate-900 dark:text-white">Cash on Delivery Available</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Similar Products Section (Bottom) -->
+<div class="mt-16 mb-8">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white">Similar Products</h2>
+<a class="text-primary font-medium text-sm flex items-center gap-1" href="#">View all <span class="material-symbols-outlined text-lg">arrow_forward</span></a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+<!-- Product Card 1 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg transition-shadow">
+<div class="aspect-square bg-slate-100 dark:bg-slate-800 relative">
+<img alt="Bose Headphones" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Silver Bose noise cancelling headphones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW_-SXxqRbkwoTVUBQaOkMtnORaeCX8RP6dB4wZJd3iAvP1OtO1y1TDqFRUqwy4i_TAtq_v2-4DEVvUgO_VmUBZg2VTDdD1vnMEQJiXy52CmaBYJPpSQd6jnjr_r06Wb6e-drxvnUumIckgp7Hb2YMApjgWFhzPI8P2AAEytJ4JDw0vNSmlONSf9Z0P2w-qE08QcB9s1tjvsUXjoREwq0juEleCGNOk56_UjMrDVrdGW_naRyMjkCs09ECahH57pTcPtUyDV2xUBas"/>
+<div class="absolute top-2 right-2 bg-white dark:bg-slate-900 p-1.5 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-slate-400 text-sm">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-slate-900 dark:text-white line-clamp-2 mb-1">Bose QuietComfort 45</h3>
+<div class="flex items-center gap-1 mb-2">
+<span class="text-xs font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded">4.6 ★</span>
+<span class="text-xs text-slate-500">(856)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-slate-900 dark:text-white">₹29,900</span>
+<button class="text-primary text-sm font-medium">Add</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg transition-shadow">
+<div class="aspect-square bg-slate-100 dark:bg-slate-800 relative">
+<img alt="Sennheiser Headphones" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Black Sennheiser over-ear headphones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIC0EJLsxPJ0dBjdZsi9cInqVUXBy0QEw1HuSVZCOMZfHtxJKL2fSGvgSinf6Lt-c4TIIe3No1J9Hu3wkScAvIE2qjxAaHnSlzycE4JtmbnYDDMYlXMJqGVmxdjaSozcKOF6nYN4NZcqPR1l8dlQkNC1RWJbWZyYSlA3fk0vcXUSURKU-8OtKGFw2kJltP5LvAUskw34NL-8ezptm6BTGNSLLML_g6r4N8j1PDOHxFziuZ50Gac9QXyLXvhIoFpT_AD6opN_0C3aTd"/>
+<div class="absolute top-2 right-2 bg-white dark:bg-slate-900 p-1.5 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-slate-400 text-sm">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-slate-900 dark:text-white line-clamp-2 mb-1">Sennheiser Momentum 4</h3>
+<div class="flex items-center gap-1 mb-2">
+<span class="text-xs font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded">4.7 ★</span>
+<span class="text-xs text-slate-500">(320)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-slate-900 dark:text-white">₹24,990</span>
+<button class="text-primary text-sm font-medium">Add</button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg transition-shadow">
+<div class="aspect-square bg-slate-100 dark:bg-slate-800 relative">
+<img alt="JBL Headphones" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Blue JBL wireless headphones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXuq1ZWWaDWyqa0IuvbVf5i34dX_6ScbYN8aZBOvxrRapV7T-EYxwiA4BwhmuWJ8c-lVNKE3eILRIF3sF22FHZe_bYEkVD_7UT2VXaXiKCh_qfT_5YiAE6Pt5Zo7d9SqF9uYLiHraOJ-gyf4GA_iauBjeveZn123_oVa9BStzaBRNijK6up6xRXaBBQ2_KY4cKw896ttQJf9QpsAROgW69puxA2WLRlWVegQjz6SzxajeTs7Xh0bUQYz5F8KPEA8246RCULgvyRfJE"/>
+<div class="absolute top-2 right-2 bg-white dark:bg-slate-900 p-1.5 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-slate-400 text-sm">favorite</span>
+</div>
+<div class="absolute bottom-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">SALE</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-slate-900 dark:text-white line-clamp-2 mb-1">JBL Tour One M2</h3>
+<div class="flex items-center gap-1 mb-2">
+<span class="text-xs font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded">4.3 ★</span>
+<span class="text-xs text-slate-500">(1.1k)</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<span class="font-bold text-slate-900 dark:text-white">₹19,999</span>
+<span class="text-xs text-slate-500 line-through">₹25k</span>
+</div>
+<button class="text-primary text-sm font-medium">Add</button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg transition-shadow">
+<div class="aspect-square bg-slate-100 dark:bg-slate-800 relative">
+<img alt="Beats Headphones" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="White Beats studio headphones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY3uGOC98bzoHVzQIy9bgGHBPrXuzydhSIFZiWLmFsrxi-Q0rDoPbvuBz5eEL0oBrf4cVcJavXwDWuoMlufOEEFFl6IllqmYxRXppQ2ItmCERdHuF6yUUpK36jSCADoE-uQjvIeyzmfRNVvag5biXPPyR847phe9u3_jyH5N82g22tGkLqFWkT8Zh-_7gF37mJf0HVQ-_vzoBc83OjstMdLZ62NycNGYwCSHCzvVCNA5DeyLPf_9wvtdczzR5vlOFq-zKKxIVggF3b"/>
+<div class="absolute top-2 right-2 bg-white dark:bg-slate-900 p-1.5 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-slate-400 text-sm">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-slate-900 dark:text-white line-clamp-2 mb-1">Beats Studio Pro</h3>
+<div class="flex items-center gap-1 mb-2">
+<span class="text-xs font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded">4.5 ★</span>
+<span class="text-xs text-slate-500">(450)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-slate-900 dark:text-white">₹32,900</span>
+<button class="text-primary text-sm font-medium">Add</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-12 px-6">
+<div class="max-w-[1440px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-4">Shop</h4>
+<ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Electronics</a></li>
+<li><a class="hover:text-primary" href="#">Fashion</a></li>
+<li><a class="hover:text-primary" href="#">Home &amp; Living</a></li>
+<li><a class="hover:text-primary" href="#">Beauty</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-4">Help</h4>
+<ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Track Order</a></li>
+<li><a class="hover:text-primary" href="#">Returns</a></li>
+<li><a class="hover:text-primary" href="#">Shipping Info</a></li>
+<li><a class="hover:text-primary" href="#">Help Center</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-4">About VIKAS</h4>
+<ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">Our Story</a></li>
+<li><a class="hover:text-primary" href="#">Careers</a></li>
+<li><a class="hover:text-primary" href="#">Press</a></li>
+<li><a class="hover:text-primary" href="#">Corporate Info</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-4">Stay Connected</h4>
+<div class="flex gap-4">
+<a class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
+<svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path></svg>
+</a>
+<a class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
+<svg aria-hidden="true" class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+</a>
+</div>
+</div>
+</div>
+<div class="max-w-[1440px] mx-auto mt-12 pt-8 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-400">
+            © 2024 VIKAS Inc. All rights reserved.
+        </div>
+</footer>
+</body></html>

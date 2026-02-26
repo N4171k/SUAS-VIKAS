@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VIKAS Customer Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#137fec",
+                        "primary-content": "#ffffff",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#334155",
+                        sale: "#e11d48", // Rose for sale
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased min-h-screen pb-20">
+<header class="sticky top-0 z-40 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<a class="flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-primary text-3xl">shutter_speed</span>
+<span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">VIKAS</span>
+</a>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-primary" href="#">Home</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" href="#">Categories</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" href="#">Deals</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" href="#">My Reservations</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full border border-border-light dark:border-border-dark bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-64" placeholder="Search for products..." type="text"/>
+</div>
+<button class="relative p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-surface-dark"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-cover bg-center border border-border-light dark:border-border-dark" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDgcYgTJw0r1PKSIE4rgYvXBJjA0n2PKdPQTpJJtZXb9aG1OK_216GYM38xHwQ22VQFGiGNdwa8_8c9m3MLChGy8G6ShR9m8K6vLPfPu9Jv5MAkNe9r-f3tunx9yzfQe1z5RkAc06l3yUxA3MAMl8YaFD3y_Cr4O0wndWcO6GFS0CgdrgstIpIWkPtXMvs3KhfN-Di4uowd-EOD9X4RYYLj0Ymvc8FRvm8R5Pc_m1c3BrNTWZu0t-mUCp8jMOGz7hETVggCwpqfc6xW");'></div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+<div>
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white">Namaste, Rahul! 👋</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Here's what we found for you today.</p>
+</div>
+<div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-900 via-rose-800 to-orange-700 text-white shadow-lg">
+<div class="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+<div class="absolute bottom-0 left-0 -mb-10 -ml-10 h-64 w-64 rounded-full bg-yellow-500/10 blur-3xl"></div>
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between p-8 gap-6">
+<div class="flex flex-col gap-2 text-center md:text-left">
+<div class="inline-flex items-center gap-2 self-center md:self-start bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-yellow-100 border border-white/10">
+<span class="material-symbols-outlined text-[16px] animate-pulse text-yellow-300">verified</span>
+                        Diwali Mega Sale
+                    </div>
+<h2 class="text-3xl md:text-4xl font-bold tracking-tight">Up to 70% Off <br/><span class="text-yellow-300">Festive Collection</span></h2>
+<p class="text-rose-100 max-w-md">Exclusive deals on ethnic wear, home decor, and gifts. Offer valid until stocks last.</p>
+</div>
+<div class="flex flex-col items-center gap-3 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+<span class="text-xs font-medium text-rose-100 uppercase tracking-widest">Sale Ends In</span>
+<div class="flex gap-3 text-center">
+<div>
+<div class="w-12 h-12 flex items-center justify-center bg-white text-rose-900 rounded-lg text-xl font-bold shadow-sm">04</div>
+<span class="text-[10px] mt-1 block text-rose-100">Hrs</span>
+</div>
+<span class="text-2xl font-bold mt-1 text-white/50">:</span>
+<div>
+<div class="w-12 h-12 flex items-center justify-center bg-white text-rose-900 rounded-lg text-xl font-bold shadow-sm">23</div>
+<span class="text-[10px] mt-1 block text-rose-100">Mins</span>
+</div>
+<span class="text-2xl font-bold mt-1 text-white/50">:</span>
+<div>
+<div class="w-12 h-12 flex items-center justify-center bg-white text-rose-900 rounded-lg text-xl font-bold shadow-sm">45</div>
+<span class="text-[10px] mt-1 block text-rose-100">Secs</span>
+</div>
+</div>
+<button class="w-full mt-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-rose-900 text-sm font-bold rounded-lg shadow-sm transition-colors">
+                        Shop Now
+                    </button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+<div class="lg:col-span-1 flex flex-col gap-6">
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-5 border border-primary/20 shadow-sm ring-1 ring-primary/5 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-bl-full -mr-4 -mt-4"></div>
+<div class="flex items-center gap-2 mb-3">
+<span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Active Reservation</h3>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">storefront</span>
+</div>
+<div>
+<p class="font-semibold text-slate-900 dark:text-white text-sm">InOrbit Mall</p>
+<p class="text-xs text-slate-500">Pickup Counter 3</p>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm border border-border-light dark:border-border-dark">
+<div class="flex justify-between mb-1">
+<span class="text-slate-500 text-xs">Time Slot</span>
+<span class="font-medium text-slate-900 dark:text-white text-xs">10:00 - 10:30 AM</span>
+</div>
+<div class="flex justify-between">
+<span class="text-slate-500 text-xs">Status</span>
+<span class="text-emerald-600 dark:text-emerald-400 font-medium text-xs">Confirmed</span>
+</div>
+</div>
+<button class="w-full py-2 flex items-center justify-center gap-2 border border-border-light dark:border-border-dark rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors bg-white dark:bg-transparent">
+<span class="material-symbols-outlined text-[18px]">qr_code</span>
+                            View Ticket
+                        </button>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<h3 class="text-sm font-semibold text-slate-900 dark:text-white px-1">Shop by Category</h3>
+<div class="flex flex-wrap gap-2">
+<a class="flex items-center gap-2 px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full text-sm hover:border-primary hover:text-primary transition-colors shadow-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">devices</span>
+                            Electronics
+                        </a>
+<a class="flex items-center gap-2 px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full text-sm hover:border-primary hover:text-primary transition-colors shadow-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">checkroom</span>
+                            Fashion
+                        </a>
+<a class="flex items-center gap-2 px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full text-sm hover:border-primary hover:text-primary transition-colors shadow-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">chair</span>
+                            Home
+                        </a>
+<a class="flex items-center gap-2 px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full text-sm hover:border-primary hover:text-primary transition-colors shadow-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">skillet</span>
+                            Kitchen
+                        </a>
+<a class="flex items-center gap-2 px-3 py-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full text-sm hover:border-primary hover:text-primary transition-colors shadow-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">sports_soccer</span>
+                            Sports
+                        </a>
+</div>
+</div>
+</div>
+<div class="lg:col-span-3 flex flex-col gap-8">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-purple-600 dark:text-purple-400">auto_awesome</span>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">Selected For You</h2>
+</div>
+<a class="text-sm font-medium text-primary hover:underline" href="#">View All</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="group bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+<div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+<div class="absolute top-3 left-3 z-10 bg-black/70 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded">AI PICK</div>
+<button class="absolute top-3 right-3 z-10 h-8 w-8 rounded-full bg-white/80 dark:bg-black/50 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+<div class="w-full h-full bg-center bg-cover transform group-hover:scale-110 transition-transform duration-500" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAS_4bbZg6W8ylRtv_CoBXKlCxwG1IgroNUw7qVSBkJ8BBgljcdDVdoxDEMgNDFtna4E-t5lMN-z8I10U0b5fvhTvpgQ_1cxfbM8s333x4XZ0XV2t8wZPCRQlPcVzsmPhkbVlWqkrvL5YrciCx5xpAVZNUNOf7SKljp3EJ-FwUgKJnwuQc5WY5qOEXHqnvfrNSQ4FriERpxzOMq22VWzBaal0piyHLmBeDCyXYU0wSvrCKIBUQS6XUe0JI_PUW6wSiBV2FWX8s-uxT1");'></div>
+</div>
+<div class="p-4 flex flex-col gap-2 flex-1">
+<div class="flex items-start justify-between">
+<h3 class="font-semibold text-slate-900 dark:text-white line-clamp-2">Sony WH-1000XM5 Wireless Headphones</h3>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[16px] fill-current">star</span>
+<span class="text-xs font-medium text-slate-700 dark:text-slate-300">4.8</span>
+<span class="text-xs text-slate-400">(2.1k reviews)</span>
+</div>
+<div class="mt-auto pt-2 flex items-center justify-between">
+<div>
+<span class="text-lg font-bold text-slate-900 dark:text-white">₹24,999</span>
+<span class="text-xs text-slate-400 line-through ml-1">₹29,990</span>
+</div>
+<button class="h-8 w-8 rounded-lg bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="group bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+<div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+<button class="absolute top-3 right-3 z-10 h-8 w-8 rounded-full bg-white/80 dark:bg-black/50 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+<div class="w-full h-full bg-center bg-cover transform group-hover:scale-110 transition-transform duration-500" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAIejsnQPXjT0g4-6gOxFlTVyQ35iBkRAiiSVgAj85Ct31lA3BLxiORVf8ec1kWquJOO6AsBSMnC4ieED3OOwetCesJLZYT2NNTVlcTSC01XA9UnAHtP3K_A6PrauIwfyHe8OwVqZ-jp1NuTFEJ9WJUjOnMNZikFSZYX2F8p_DEi85QhQQxcDnDXAgvER2pE97XLxkxWeh1SIM4aAybmCYJU0hJClhgO_R1zB-LBFlcBtx5dlbXLBaA1gawgezT299n7VmyOKTf04Xb");'></div>
+</div>
+<div class="p-4 flex flex-col gap-2 flex-1">
+<div class="flex items-start justify-between">
+<h3 class="font-semibold text-slate-900 dark:text-white line-clamp-2">Apple iPhone 15 Pro (256GB) - Natural Titanium</h3>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[16px] fill-current">star</span>
+<span class="text-xs font-medium text-slate-700 dark:text-slate-300">4.9</span>
+<span class="text-xs text-slate-400">(854 reviews)</span>
+</div>
+<div class="mt-auto pt-2 flex items-center justify-between">
+<div>
+<span class="text-lg font-bold text-slate-900 dark:text-white">₹1,34,900</span>
+</div>
+<button class="h-8 w-8 rounded-lg bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</div>
+<div class="group bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+<div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+<div class="absolute top-3 left-3 z-10 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded">20% OFF</div>
+<button class="absolute top-3 right-3 z-10 h-8 w-8 rounded-full bg-white/80 dark:bg-black/50 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+<span class="material-symbols-outlined text-6xl text-slate-300">watch</span>
+</div>
+<div class="p-4 flex flex-col gap-2 flex-1">
+<div class="flex items-start justify-between">
+<h3 class="font-semibold text-slate-900 dark:text-white line-clamp-2">Samsung Galaxy Watch 6 Classic</h3>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[16px] fill-current">star</span>
+<span class="text-xs font-medium text-slate-700 dark:text-slate-300">4.6</span>
+<span class="text-xs text-slate-400">(430 reviews)</span>
+</div>
+<div class="mt-auto pt-2 flex items-center justify-between">
+<div>
+<span class="text-lg font-bold text-slate-900 dark:text-white">₹32,999</span>
+<span class="text-xs text-slate-400 line-through ml-1">₹41,999</span>
+</div>
+<button class="h-8 w-8 rounded-lg bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4 mt-4">
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">Trending Now</h2>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-6 shadow-sm">
+<div class="flex flex-col md:flex-row gap-6 items-center">
+<div class="w-full md:w-1/3 h-48 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-6xl text-slate-300">styler</span>
+</div>
+<div class="flex-1 flex flex-col gap-3">
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 rounded text-xs font-bold uppercase">Hot Deal</span>
+<span class="text-sm text-slate-500">Only 2 left at this price</span>
+</div>
+<h3 class="text-2xl font-bold text-slate-900 dark:text-white">Premium Leather Office Chair</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Ergonomic design with lumbar support. Perfect for long working hours. Available in Black and Tan.</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-3xl font-bold text-slate-900 dark:text-white">₹12,499</span>
+<button class="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium rounded-lg hover:opacity-90 transition-opacity">
+                                        Add to Cart
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-6 right-6 z-50">
+<button class="group flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white pl-4 pr-5 py-3 rounded-full shadow-lg shadow-indigo-500/30 transition-all hover:scale-105 active:scale-95">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+</span>
+<span class="font-semibold tracking-wide">Ask VIKAS AI</span>
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+</button>
+</div>
+
+</body></html>

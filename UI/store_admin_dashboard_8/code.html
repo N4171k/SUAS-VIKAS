@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VIKAS Store Locator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#137fec",
+                        "primary-content": "#ffffff",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .vikas-pin {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23137fec'%3E%3Cpath fill-rule='evenodd' d='M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z' clip-rule='evenodd' /%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 48px;
+            height: 48px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+        .vikas-pin:hover {
+            transform: scale(1.1) translateY(-5px);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .map-bg {
+            background-color: #e5e7eb;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.5) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255,255,255,0.5) 2px, transparent 2px);
+            background-size: 100px 100px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased h-screen flex flex-col overflow-hidden">
+<header class="h-16 flex-shrink-0 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark flex items-center justify-between px-6 z-20 shadow-sm relative">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm">V</div>
+<span class="font-bold text-lg tracking-tight">VIKAS</span>
+</div>
+<div class="hidden md:flex relative w-96">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/50 text-slate-900 dark:text-white placeholder-slate-500" placeholder="Search by city, area or pincode" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">my_location</span>
+                Use Current Location
+            </button>
+<div class="h-8 w-[1px] bg-border-light dark:border-border-dark mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full h-9 w-9 border border-border-light" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDgcYgTJw0r1PKSIE4rgYvXBJjA0n2PKdPQTpJJtZXb9aG1OK_216GYM38xHwQ22VQFGiGNdwa8_8c9m3MLChGy8G6ShR9m8K6vLPfPu9Jv5MAkNe9r-f3tunx9yzfQe1z5RkAc06l3yUxA3MAMl8YaFD3y_Cr4O0wndWcO6GFS0CgdrgstIpIWkPtXMvs3KhfN-Di4uowd-EOD9X4RYYLj0Ymvc8FRvm8R5Pc_m1c3BrNTWZu0t-mUCp8jMOGz7hETVggCwpqfc6xW");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden relative">
+<aside class="w-full md:w-[400px] lg:w-[450px] flex-shrink-0 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col z-10 shadow-xl overflow-hidden">
+<div class="p-4 border-b border-border-light dark:border-border-dark md:hidden">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/50" placeholder="Search location" type="text"/>
+</div>
+</div>
+<div class="p-4 border-b border-border-light dark:border-border-dark bg-slate-50/50 dark:bg-slate-800/20 flex justify-between items-center">
+<h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nearby Stores</h2>
+<span class="text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">12 Found</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4">
+<div class="group p-4 rounded-xl border-2 border-primary bg-primary/5 dark:bg-primary/10 shadow-sm cursor-pointer relative overflow-hidden transition-all">
+<div class="absolute top-0 right-0 p-3">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold">
+                            Open Now
+                        </span>
+</div>
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-700 bg-center bg-cover flex-shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAS_4bbZg6W8ylRtv_CoBXKlCxwG1IgroNUw7qVSBkJ8BBgljcdDVdoxDEMgNDFtna4E-t5lMN-z8I10U0b5fvhTvpgQ_1cxfbM8s333x4XZ0XV2t8wZPCRQlPcVzsmPhkbVlWqkrvL5YrciCx5xpAVZNUNOf7SKljp3EJ-FwUgKJnwuQc5WY5qOEXHqnvfrNSQ4FriERpxzOMq22VWzBaal0piyHLmBeDCyXYU0wSvrCKIBUQS6XUe0JI_PUW6wSiBV2FWX8s-uxT1");'></div>
+<div class="flex-1">
+<h3 class="font-bold text-slate-900 dark:text-white text-lg">InOrbit Mall Store</h3>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">Sector 30A, Vashi, Navi Mumbai, Maharashtra 400703</p>
+<div class="flex items-center gap-4 mt-3">
+<div class="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-[18px] text-primary">distance</span>
+                                    0.8 km
+                                </div>
+<div class="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-[18px] text-amber-500">star</span>
+                                    4.8 (120)
+                                </div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-2 px-4 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-sm flex items-center justify-center gap-2">
+                            View Store
+                            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+<button class="p-2 border border-border-light dark:border-border-dark rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-[20px]">directions</span>
+</button>
+</div>
+</div>
+<div class="group p-4 rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-surface-dark hover:border-primary/50 dark:hover:border-primary/50 transition-all cursor-pointer shadow-sm hover:shadow-md">
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-700 bg-center bg-cover flex-shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAIejsnQPXjT0g4-6gOxFlTVyQ35iBkRAiiSVgAj85Ct31lA3BLxiORVf8ec1kWquJOO6AsBSMnC4ieED3OOwetCesJLZYT2NNTVlcTSC01XA9UnAHtP3K_A6PrauIwfyHe8OwVqZ-jp1NuTFEJ9WJUjOnMNZikFSZYX2F8p_DEi85QhQQxcDnDXAgvER2pE97XLxkxWeh1SIM4aAybmCYJU0hJClhgO_R1zB-LBFlcBtx5dlbXLBaA1gawgezT299n7VmyOKTf04Xb");'></div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-slate-900 dark:text-white text-base">Seawoods Grand Central</h3>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-500">
+                                    Closing soon
+                                </span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">Seawoods Station Road, Nerul East</p>
+<div class="flex items-center gap-4 mt-3">
+<div class="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-[18px] text-slate-400">distance</span>
+                                    4.2 km
+                                </div>
+<div class="text-xs text-slate-400">
+                                    Closes 9:30 PM
+                                </div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity h-0 group-hover:h-auto overflow-hidden">
+<button class="flex-1 py-2 px-4 border border-primary text-primary text-sm font-medium rounded-lg hover:bg-primary/5 transition-colors">
+                            View Store
+                        </button>
+</div>
+</div>
+<div class="group p-4 rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-surface-dark hover:border-primary/50 dark:hover:border-primary/50 transition-all cursor-pointer shadow-sm hover:shadow-md">
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0 text-slate-300">
+<span class="material-symbols-outlined text-[32px]">storefront</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-slate-900 dark:text-white text-base">Phoenix Marketcity</h3>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                                    Closed
+                                </span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">LBS Marg, Kurla West</p>
+<div class="flex items-center gap-4 mt-3">
+<div class="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-[18px] text-slate-400">distance</span>
+                                    12.5 km
+                                </div>
+<div class="text-xs text-slate-400">
+                                    Opens 10:00 AM
+                                </div>
+</div>
+</div>
+</div>
+</div>
+<div class="group p-4 rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-surface-dark hover:border-primary/50 dark:hover:border-primary/50 transition-all cursor-pointer shadow-sm hover:shadow-md">
+<div class="flex gap-4">
+<div class="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0 text-slate-300">
+<span class="material-symbols-outlined text-[32px]">storefront</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-slate-900 dark:text-white text-base">R City Mall</h3>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">
+                                    Open Now
+                                </span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">Ghatkopar West</p>
+<div class="flex items-center gap-4 mt-3">
+<div class="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-[18px] text-slate-400">distance</span>
+                                    14.1 km
+                                </div>
+<div class="text-xs text-slate-400">
+                                    Closes 11:00 PM
+                                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-border-light dark:border-border-dark bg-slate-50 dark:bg-slate-900/50">
+<p class="text-xs text-center text-slate-500">Showing 4 of 12 stores nearby</p>
+</div>
+</aside>
+<div class="flex-1 relative bg-slate-200 dark:bg-slate-900 overflow-hidden">
+<div class="absolute inset-0 map-bg opacity-80 dark:opacity-20 pointer-events-none"></div>
+<div class="absolute right-4 bottom-8 flex flex-col gap-2 z-10">
+<button class="w-10 h-10 bg-white dark:bg-surface-dark rounded-lg shadow-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-10 h-10 bg-white dark:bg-surface-dark rounded-lg shadow-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="h-2"></div>
+<button class="w-10 h-10 bg-white dark:bg-surface-dark rounded-lg shadow-lg flex items-center justify-center text-primary hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">near_me</span>
+</button>
+</div>
+<div class="absolute inset-0 pointer-events-none"> 
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full pointer-events-auto">
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white dark:bg-surface-dark text-slate-900 dark:text-white text-xs font-bold py-1 px-3 rounded shadow-lg whitespace-nowrap animate-bounce z-20">
+                        InOrbit Mall
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white dark:border-t-surface-dark"></div>
+</div>
+<div class="vikas-pin"></div>
+<div class="absolute top-[36px] left-[14px] w-5 h-2 bg-black/30 rounded-[100%] blur-[2px]"></div>
+</div>
+<div class="absolute top-[30%] left-[30%] pointer-events-auto group">
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white dark:bg-surface-dark text-slate-900 dark:text-white text-xs font-bold py-1 px-3 rounded shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                        Seawoods
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white dark:border-t-surface-dark"></div>
+</div>
+<div class="vikas-pin filter grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all scale-75 hover:scale-100"></div>
+</div>
+<div class="absolute bottom-[20%] right-[35%] pointer-events-auto group">
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white dark:bg-surface-dark text-slate-900 dark:text-white text-xs font-bold py-1 px-3 rounded shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                        Phoenix Marketcity
+                        <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white dark:border-t-surface-dark"></div>
+</div>
+<div class="vikas-pin filter grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all scale-75 hover:scale-100"></div>
+</div>
+<svg class="absolute inset-0 w-full h-full -z-10 opacity-30 dark:opacity-10" xmlns="http://www.w3.org/2000/svg">
+<path d="M-100 200 Q 300 150 500 400 T 1200 300" fill="none" stroke="#94a3b8" stroke-width="8"></path>
+<path d="M200 -50 Q 250 400 400 600" fill="none" stroke="#94a3b8" stroke-width="6"></path>
+<path d="M800 800 Q 600 400 900 100" fill="none" stroke="#94a3b8" stroke-width="6"></path>
+<circle cx="50%" cy="50%" fill="none" r="300" stroke="#e2e8f0" stroke-dasharray="10,10" stroke-width="2"></circle>
+</svg>
+</div>
+</div>
+</main>
+
+</body></html>
