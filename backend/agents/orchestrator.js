@@ -5,7 +5,7 @@ const ragService = require('../services/rag');
  * Agent Orchestrator
  * Handles multi-step AI shopping workflows:
  * 1. Intent Detection → 2. Product Search → 3. Context Building
- * AI response generation is done on the frontend via Puter.js
+ * AI response generation is done on the frontend via Gemini 2.5 Flash
  */
 
 const INTENTS = {

@@ -6,7 +6,7 @@ const ragService = require('../services/rag');
 
 const router = express.Router();
 
-// POST /api/ai/query - Search products & return context for client-side AI (Puter.js)
+// POST /api/ai/query - Search products & return context for client-side AI (Gemini 2.5 Flash)
 router.post('/query', optionalAuth, async (req, res, next) => {
   try {
     const { message } = req.body;
@@ -22,7 +22,7 @@ router.post('/query', optionalAuth, async (req, res, next) => {
     // Use RAG to find relevant products
     const relevantProducts = await ragService.searchProducts(message);
 
-    // Build context string for the frontend to pass to Puter.js
+    // Build context string for the frontend to pass to Gemini
     let context = buildContext(relevantProducts);
 
     // If no products found, add a hint so the AI knows

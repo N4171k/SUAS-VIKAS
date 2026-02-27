@@ -1,9 +1,9 @@
 /**
  * AI Service (Server-side)
  * 
- * NOTE: AI chat is now handled on the frontend using Puter.js (puter.ai.chat()).
+ * NOTE: AI chat is now handled on the frontend using the Gemini 2.5 Flash API.
  * This module provides helper utilities for building product context strings
- * that the frontend can include in its Puter.js AI prompts.
+ * that the frontend can include in its Gemini AI prompts.
  */
 
 /**

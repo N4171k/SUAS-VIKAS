@@ -267,21 +267,9 @@ export default function ChatBubble({ productId = null, onClose }) {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [puterReady, setPuterReady] = useState(false);
   const [productMap, setProductMap] = useState({});
   const chatRef = useRef(null);
   const productContextRef = useRef(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !window.puter) {
-      const script = document.createElement('script');
-      script.src = 'https://js.puter.com/v2/';
-      script.onload = () => setPuterReady(true);
-      document.head.appendChild(script);
-    } else if (window.puter) {
-      setPuterReady(true);
-    }
-  }, []);
 
   useEffect(() => {
     if (productId) {
@@ -346,12 +334,40 @@ export default function ChatBubble({ productId = null, onClose }) {
       });
       aiMessages.push({ role: 'user', content: userMessage });
 
-      let aiResponse = 'AI is loading, please try again in a moment...';
-      if (puterReady && window.puter) {
-        const result = await window.puter.ai.chat(aiMessages);
-        aiResponse = typeof result === 'string'
-          ? result
-          : (result?.message?.content || result?.toString() || 'Sorry, I could not generate a response.');
+      // ── Gemini 2.5 Flash ──────────────────────────────────────────────────
+      const geminiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      let aiResponse = geminiKey
+        ? 'Thinking…'
+        : '⚠️ Gemini API key not configured. Add NEXT_PUBLIC_GEMINI_API_KEY to .env.local.';
+
+      if (geminiKey) {
+        // Split system instructions from conversation turns
+        const systemParts = aiMessages
+          .filter(m => m.role === 'system')
+          .map(m => ({ text: m.content }));
+        const contents = aiMessages
+          .filter(m => m.role !== 'system')
+          .map(m => ({
+            role: m.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: m.content }],
+          }));
+
+        const geminiRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              system_instruction: { parts: systemParts },
+              contents,
+              generationConfig: { temperature: 0.7 },
+            }),
+          }
+        );
+        const geminiData = await geminiRes.json();
+        aiResponse =
+          geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ||
+          `Sorry, I could not generate a response. ${geminiData?.error?.message || ''}`;
       }
 
       setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
