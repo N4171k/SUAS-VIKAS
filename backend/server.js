@@ -28,6 +28,10 @@ const server = http.createServer(app);
 // Allowed origins for CORS
 const allowedOrigins = [
   'http://localhost:3000',
+  'https://localhost:3000',
+  'https://vikast.naitiktiwari.in',
+  'http://vikast.naitiktiwari.in',
+  'https://suas-vikas.vercel.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
