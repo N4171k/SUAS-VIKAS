@@ -47,7 +47,7 @@ export default function Header() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/products?q=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchOpen(false);
       setSearchQuery('');
     }
@@ -113,7 +113,7 @@ export default function Header() {
                     </form>
                     <div className="mt-2 flex flex-wrap gap-1.5 pt-2 border-t border-gray-100">
                       {['Tops', 'Shoes', 'Dresses', 'Jackets'].map((q) => (
-                        <button key={q} onClick={() => { router.push(`/products?q=${q}`); setSearchOpen(false); }}
+                        <button key={q} onClick={() => { router.push(`/products?search=${q}`); setSearchOpen(false); }}
                           className="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-600 hover:bg-gray-200 transition-colors">
                           {q}
                         </button>

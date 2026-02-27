@@ -24,7 +24,7 @@ function ProductsContent() {
   const [viewMode, setViewMode] = useState('grid');
 
   const [filters, setFilters] = useState({
-    search: searchParams.get('search') || '',
+    search: searchParams.get('search') || searchParams.get('q') || '',
     category: searchParams.get('category') || '',
     sub_category: searchParams.get('sub_category') || '',
     gender: searchParams.get('gender') || '',
@@ -37,6 +37,21 @@ function ProductsContent() {
     order: 'DESC',
     page: 1,
   });
+
+  // Re-sync filters whenever the URL search params change (e.g. clicking a
+  // category tile on the home page or the desktop category strip in the header).
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      search: searchParams.get('search') || searchParams.get('q') || '',
+      category: searchParams.get('category') || '',
+      sub_category: searchParams.get('sub_category') || '',
+      gender: searchParams.get('gender') || '',
+      colour: searchParams.get('colour') || '',
+      page: 1,
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.toString()]);
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
