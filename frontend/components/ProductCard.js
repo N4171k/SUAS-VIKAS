@@ -2,6 +2,13 @@
 import Link from 'next/link';
 import { FiStar, FiHeart } from 'react-icons/fi';
 
+// Force HTTPS and provide a reliable fallback for broken image URLs
+const safeImageUrl = (url, fallbackSeed) => {
+  if (!url) return `https://picsum.photos/seed/${fallbackSeed}/400/600`;
+  // Upgrade HTTP → HTTPS to avoid mixed-content blocks inside Capacitor WebView
+  return url.replace(/^http:\/\//i, 'https://');
+};
+
 export default function ProductCard({ product, viewMode = 'grid' }) {
   const discount = product.original_price
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
@@ -14,10 +21,14 @@ export default function ProductCard({ product, viewMode = 'grid' }) {
       {/* Image Container with Airbnb-style aspect ratio and rounded corners */}
       <div className={`${viewMode === 'list' ? 'w-48 h-48' : 'aspect-[3/4]'} bg-gray-100 rounded-xl overflow-hidden relative`}>
         <img
-          src={product.image_url || `https://picsum.photos/seed/${product.id}/400/600`}
+          src={safeImageUrl(product.image_url, product.id)}
           alt={product.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
+          onError={(e) => {
+            e.currentTarget.onerror = null; // prevent infinite loop
+            e.currentTarget.src = `https://picsum.photos/seed/${product.id}/400/600`;
+          }}
         />
         
         {/* Glassmorphism Favorite Button */}

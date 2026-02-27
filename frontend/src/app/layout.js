@@ -14,6 +14,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Ensure content fits within safe areas on all devices/notches */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

@@ -33,7 +33,10 @@ const config: CapacitorConfig = {
     },
     StatusBar: {
       style: 'Dark',
-      backgroundColor: '#FF385C',
+      backgroundColor: '#ffffff',
+      // overlaysWebView: false means Android draws the status bar ABOVE the WebView.
+      // Our fixed header then sits correctly below it without any CSS safe-area hacks.
+      overlaysWebView: false,
     },
   },
 };
