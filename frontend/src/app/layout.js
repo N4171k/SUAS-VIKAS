@@ -4,6 +4,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import GlobalChat from '../../components/GlobalChat';
 import CapacitorBackButton from '../../components/CapacitorBackButton';
+import PageTransitionLoader from '../../components/PageTransitionLoader';
 import { AuthProvider } from '../../lib/authContext';
 
 export const metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-screen flex flex-col bg-[#F7F7F7]">
         <AuthProvider>
+          <PageTransitionLoader />
           <CapacitorBackButton />
           <Toaster position="top-right" />
           <Header />

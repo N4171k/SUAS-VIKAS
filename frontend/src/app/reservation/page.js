@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { FiClock, FiMapPin, FiCheckCircle, FiPackage } from 'react-icons/fi';
 import api from '../../../lib/api';
 import { useAuth } from '../../../lib/authContext';
+import Loader from '../../../components/Loader';
 
 const statusSteps = ['pending', 'confirmed', 'ready', 'picked_up'];
 const statusLabels = { pending: 'Pending', confirmed: 'Confirmed', ready: 'Ready for Pickup', picked_up: 'Picked Up', expired: 'Expired', cancelled: 'Cancelled' };
@@ -39,7 +40,7 @@ export default function ReservationPage() {
       <h1 className="text-2xl font-bold mb-6">My Reservations</h1>
 
       {loading ? (
-        <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="bg-gray-200 h-40 rounded-xl animate-pulse"></div>)}</div>
+        <Loader label="Loading reservations…" />
       ) : reservations.length === 0 ? (
         <div className="text-center py-16">
           <FiPackage className="w-16 h-16 mx-auto text-gray-300 mb-4" />

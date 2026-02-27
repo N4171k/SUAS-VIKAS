@@ -5,6 +5,7 @@ import { FiShoppingBag, FiTrendingUp, FiMapPin, FiZap, FiArrowRight, FiHeart } f
 import api from '../../lib/api';
 import { useAuth } from '../../lib/authContext';
 import ProductCard from '../../components/ProductCard';
+import Loader from '../../components/Loader';
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -192,15 +193,7 @@ export default function HomePage() {
           </div>
 
           {suggestionsLoading ? (
-            <div className="grid grid-cols-1 sc-sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-gray-200 rounded-xl aspect-[3/4] mb-4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                </div>
-              ))}
-            </div>
+            <Loader label="Finding your picks…" />
           ) : suggestionsError ? (
             <div className="clay-card p-10 text-center text-gray-500">
               <p className="text-base font-medium mb-2 text-red-500">⚠ Could not load recommendations</p>
@@ -243,15 +236,7 @@ export default function HomePage() {
         </div>
         
         {loading ? (
-          <div className="grid grid-cols-1 sc-sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="bg-gray-200 rounded-xl aspect-[3/4] mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            ))}
-          </div>
+          <Loader label="Loading products…" />
         ) : (
           <div className="grid grid-cols-1 sc-sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
             {featuredProducts.map((product) => (

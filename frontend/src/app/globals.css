@@ -172,6 +172,23 @@ h1, h2, h3, h4, h5, h6 {
 /* ===== Footer pulse ===== */
 @keyframes footer-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
+/* ===== VIKAS Loader spinner ===== */
+@keyframes vikas-spinner { to { transform: rotate(360deg); } }
+.vikas-spin {
+  animation: vikas-spinner 0.75s linear infinite;
+  border-color: #FF385C #FF385C transparent transparent;
+}
+
+/* ===== Page transition progress bar shimmer ===== */
+@keyframes vikas-progress-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.vikas-progress-bar {
+  background-size: 200% auto;
+  animation: vikas-progress-shimmer 1.2s linear infinite;
+}
+
 /* ===== Noise Overlay ===== */
 .vikas-noise-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0.05; }
 

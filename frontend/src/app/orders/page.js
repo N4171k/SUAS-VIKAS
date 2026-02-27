@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { FiPackage, FiClock, FiCheck, FiTruck } from 'react-icons/fi';
 import api from '../../../lib/api';
 import { useAuth } from '../../../lib/authContext';
+import Loader from '../../../components/Loader';
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -38,7 +39,7 @@ export default function OrdersPage() {
       <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
       {loading ? (
-        <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="bg-gray-200 h-32 rounded-xl animate-pulse"></div>)}</div>
+        <Loader label="Loading orders…" />
       ) : orders.length === 0 ? (
         <div className="text-center py-16">
           <FiPackage className="w-16 h-16 mx-auto text-gray-300 mb-4" />

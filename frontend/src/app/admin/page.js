@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { FiUsers, FiPackage, FiShoppingCart, FiMapPin, FiTrendingUp, FiCalendar, FiDollarSign, FiBarChart2 } from 'react-icons/fi';
 import api from '../../../lib/api';
 import { useAuth } from '../../../lib/authContext';
+import Loader from '../../../components/Loader';
 
 export default function AdminPage() {
   const { token, user } = useAuth();
@@ -69,7 +70,7 @@ export default function AdminPage() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">{[...Array(6)].map((_, i) => <div key={i} className="bg-gray-200 h-32 rounded-xl animate-pulse"></div>)}</div>
+        <Loader label="Loading dashboard…" />
       ) : (
         <>
           {activeTab === 'overview' && (

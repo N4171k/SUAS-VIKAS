@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { label: 'AR Try-On', href: '/ar' },
 ];
 
-const CATEGORIES = ['New Arrivals', 'Apparel', 'Footwear', 'Accessories', 'Sportswear', 'Vintage'];
+const CATEGORIES = ['New Arrivals', 'Apparel', 'Footwear', 'Home & Kitchen', 'Toys', 'Electronics'];
 
 export default function Header() {
   const { user, token, logout } = useAuth();

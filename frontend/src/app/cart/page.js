@@ -5,6 +5,7 @@ import { FiTrash2, FiMinus, FiPlus, FiShoppingBag } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import api from '../../../lib/api';
 import { useAuth } from '../../../lib/authContext';
+import Loader from '../../../components/Loader';
 
 export default function CartPage() {
   const { token } = useAuth();
@@ -48,9 +49,7 @@ export default function CartPage() {
     );
   }
 
-  if (loading) {
-    return <div className="max-w-4xl mx-auto px-4 py-8"><div className="animate-pulse space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="bg-gray-200 h-24 rounded-xl"></div>)}</div></div>;
-  }
+  if (loading) return <Loader fullScreen label="Loading your cart…" />;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">

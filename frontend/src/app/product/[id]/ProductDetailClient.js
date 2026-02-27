@@ -8,6 +8,7 @@ import api from '../../../../lib/api';
 import { useAuth } from '../../../../lib/authContext';
 import ReservationModal from '../../../../components/ReservationModal';
 import ChatBubble from '../../../../components/ChatBubble';
+import Loader from '../../../../components/Loader';
 
 export default function ProductDetailClient() {
   const { id } = useParams();
@@ -62,20 +63,7 @@ export default function ProductDetailClient() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-2 gap-8 animate-pulse">
-          <div className="bg-gray-200 aspect-square rounded-xl"></div>
-          <div className="space-y-4">
-            <div className="bg-gray-200 h-8 w-3/4 rounded"></div>
-            <div className="bg-gray-200 h-6 w-1/2 rounded"></div>
-            <div className="bg-gray-200 h-32 rounded"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <Loader fullScreen label="Loading product…" />;
 
   if (!product) {
     return <div className="text-center py-16"><p className="text-gray-500 text-lg">Product not found</p></div>;

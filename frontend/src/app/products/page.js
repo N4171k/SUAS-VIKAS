@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FiFilter, FiX, FiChevronDown, FiGrid, FiList } from 'react-icons/fi';
 import api from '../../../lib/api';
+import Loader from '../../../components/Loader';
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-8 text-center"><div className="animate-pulse">Loading products...</div></div>}>
+    <Suspense fallback={<Loader fullScreen label="Loading products…" />}>
       <ProductsContent />
     </Suspense>
   );
@@ -197,15 +198,7 @@ function ProductsContent() {
 
       {/* Product Grid */}
       {loading ? (
-        <div className={`grid ${viewMode === 'grid' ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-1'} gap-4`}>
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
-              <div className="bg-gray-200 h-48 rounded-lg mb-3"></div>
-              <div className="bg-gray-200 h-4 w-3/4 rounded mb-2"></div>
-              <div className="bg-gray-200 h-4 w-1/2 rounded"></div>
-            </div>
-          ))}
-        </div>
+        <Loader label="Loading products…" />
       ) : products.length === 0 ? (
         <div className="text-center py-16">
           <p className="text-gray-500 text-lg mb-4">No products found</p>
