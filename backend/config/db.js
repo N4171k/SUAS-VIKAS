@@ -3,6 +3,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') }
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
+  dialectModule: require('pg'),
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   dialectOptions: {
     ssl: {
