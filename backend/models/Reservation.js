@@ -29,7 +29,7 @@ const Reservation = sequelize.define('Reservation', {
     comment: 'Pickup time slot e.g. "2026-02-27T10:00-11:00"',
   },
   status: {
-    type: DataTypes.ENUM('pending', 'confirmed', 'ready', 'picked_up', 'expired', 'cancelled'),
+    type: DataTypes.STRING,
     defaultValue: 'pending',
   },
   qr_code: {

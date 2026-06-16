@@ -9,7 +9,7 @@ require('../models');
     console.log('All VIKAS- tables created!');
 
     const [tables] = await sequelize.query(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name`
+      `SELECT name AS table_name FROM sqlite_master WHERE type='table' ORDER BY name`
     );
     console.log('Tables created:');
     tables.forEach(t => console.log('  -', t.table_name));
