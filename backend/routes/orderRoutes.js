@@ -7,10 +7,7 @@ const router = express.Router();
 // GET /api/orders
 router.get('/', authenticate, async (req, res, next) => {
   try {
-    const orders = await Order.findAll({
-      where: { user_id: req.user.id },
-      order: [['created_at', 'DESC']],
-    });
+    const orders = await Order.findByUser(req.user.id);
     res.json(orders);
   } catch (error) {
     next(error);
@@ -22,35 +19,41 @@ router.post('/', authenticate, async (req, res, next) => {
   try {
     const { shippingAddress } = req.body;
 
-    const cartItems = await Cart.findAll({
-      where: { user_id: req.user.id },
-      include: [{ model: Product, as: 'product' }],
-    });
+    const cartItems = await Cart.findByUser(req.user.id);
 
     if (cartItems.length === 0) {
       return res.status(400).json({ error: 'Cart is empty.' });
     }
 
-    const items = cartItems.map((item) => ({
-      productId: item.product_id,
-      title: item.product.title,
-      price: parseFloat(item.product.price),
-      quantity: item.quantity,
-      image_url: item.product.image_url,
-    }));
+    const items = [];
+    for (const item of cartItems) {
+      const product = await Product.findById(item.productId);
+      if (!product) continue;
+      items.push({
+        productId: item.productId,
+        title: product.title,
+        price: parseFloat(product.price),
+        quantity: item.quantity,
+        image_url: product.image_url,
+      });
+    }
+
+    if (items.length === 0) {
+      return res.status(400).json({ error: 'Cart is empty.' });
+    }
 
     const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     const order = await Order.create({
-      user_id: req.user.id,
+      userId: req.user.id,
       items,
       total: total.toFixed(2),
-      shipping_address: shippingAddress || null,
+      shippingAddress: shippingAddress || null,
       status: 'confirmed',
     });
 
     // Clear cart
-    await Cart.destroy({ where: { user_id: req.user.id } });
+    await Cart.clear(req.user.id);
 
     res.status(201).json(order);
   } catch (error) {
@@ -63,7 +66,7 @@ router.post('/buy-now', authenticate, async (req, res, next) => {
   try {
     const { productId, quantity = 1, shippingAddress } = req.body;
 
-    const product = await Product.findByPk(productId);
+    const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ error: 'Product not found.' });
     }
@@ -79,10 +82,10 @@ router.post('/buy-now', authenticate, async (req, res, next) => {
     const total = parseFloat(product.price) * quantity;
 
     const order = await Order.create({
-      user_id: req.user.id,
+      userId: req.user.id,
       items,
       total: total.toFixed(2),
-      shipping_address: shippingAddress || null,
+      shippingAddress: shippingAddress || null,
       status: 'confirmed',
     });
 

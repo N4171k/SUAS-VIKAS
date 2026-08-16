@@ -1,11 +1,9 @@
-const { Op, fn, col, literal } = require('sequelize');
-const { sequelize } = require('../config/db');
 const Product = require('../models/Product');
 
 /**
  * RAG (Retrieval Augmented Generation) Service
  * Searches the product catalog for relevant products based on query
- * Uses keyword-based search across all fashion-specific fields
+ * Uses in-memory keyword search over the DynamoDB catalog (28k items)
  */
 
 // Common stop words to remove from queries
@@ -61,6 +59,14 @@ const expandKeyword = (keyword) => {
   return [...new Set(expanded)];
 };
 
+/**
+ * In-memory catalog cache (shared with Product model so the 28k-item table is
+ * only scanned once per process — see Product.getCatalog).
+ */
+const getCatalog = async () => {
+  return Product.getCatalog();
+};
+
 const searchProducts = async (query, limit = 10) => {
   try {
     const keywords = query
@@ -69,47 +75,38 @@ const searchProducts = async (query, limit = 10) => {
       .split(/\s+/)
       .filter((w) => w.length > 1 && !STOP_WORDS.has(w));
 
+    const catalog = await getCatalog();
+
     if (keywords.length === 0) {
       // Return popular/top-rated products when query has no useful keywords
-      return await Product.findAll({
-        where: { is_active: true },
-        limit,
-        order: [['rating', 'DESC'], ['rating_count', 'DESC']],
-      });
+      return [...catalog]
+        .filter((p) => p.is_active)
+        .sort((a, b) => (b.rating - a.rating) || (b.rating_count - a.rating_count))
+        .slice(0, limit);
     }
 
     // Expand keywords with synonyms
     const allKeywords = keywords.flatMap(expandKeyword);
     const uniqueKeywords = [...new Set(allKeywords)];
 
-    // Build search conditions — use iLike for PostgreSQL case-insensitive search
-    const searchConditions = uniqueKeywords.map((keyword) => ({
-      [Op.or]: [
-        { title: { [Op.iLike]: `%${keyword}%` } },
-        { description: { [Op.iLike]: `%${keyword}%` } },
-        { category: { [Op.iLike]: `%${keyword}%` } },
-        { sub_category: { [Op.iLike]: `%${keyword}%` } },
-        { product_type: { [Op.iLike]: `%${keyword}%` } },
-        { brand: { [Op.iLike]: `%${keyword}%` } },
-        { gender: { [Op.iLike]: `%${keyword}%` } },
-        { colour: { [Op.iLike]: `%${keyword}%` } },
-        { usage: { [Op.iLike]: `%${keyword}%` } },
-      ],
-    }));
+    const scored = catalog.filter((p) => p.is_active).map((p) => {
+      const haystack = [
+        p.title, p.description, p.category, p.sub_category,
+        p.product_type, p.brand, p.gender, p.colour, p.usage,
+      ].filter(Boolean).join(' ').toLowerCase();
 
-    const products = await Product.findAll({
-      where: {
-        is_active: true,
-        [Op.or]: searchConditions,
-      },
-      limit,
-      order: [
-        ['rating', 'DESC'],
-        ['rating_count', 'DESC'],
-      ],
+      let matches = 0;
+      for (const kw of uniqueKeywords) {
+        if (haystack.includes(kw)) matches++;
+      }
+      return { product: p, matches };
     });
 
-    return products;
+    return scored
+      .filter((s) => s.matches > 0)
+      .sort((a, b) => (b.matches - a.matches) || (b.product.rating - a.product.rating))
+      .slice(0, limit)
+      .map((s) => s.product);
   } catch (error) {
     console.error('RAG Search Error:', error.message);
     return [];
@@ -118,71 +115,37 @@ const searchProducts = async (query, limit = 10) => {
 
 /**
  * Get a high-level catalog summary so the AI knows what the store carries.
- * Result is cached in-memory for 10 minutes.
  */
-let _catalogCache = null;
-let _catalogCacheTime = 0;
-const CACHE_TTL = 10 * 60 * 1000; // 10 min
-
 const getCatalogSummary = async () => {
   try {
-    if (_catalogCache && Date.now() - _catalogCacheTime < CACHE_TTL) {
-      return _catalogCache;
-    }
+    const catalog = await getCatalog();
 
-    const totalCount = await Product.count({ where: { is_active: true } });
+    const totalCount = catalog.length;
 
-    const categories = await Product.findAll({
-      attributes: [
-        'category',
-        [fn('COUNT', col('id')), 'count'],
-      ],
-      where: { is_active: true },
-      group: ['category'],
-      order: [[fn('COUNT', col('id')), 'DESC']],
-      raw: true,
+    const categories = {};
+    const genders = {};
+    const productTypes = {};
+    const colours = new Set();
+
+    catalog.forEach((p) => {
+      if (p.category) categories[p.category] = (categories[p.category] || 0) + 1;
+      if (p.gender) genders[p.gender] = (genders[p.gender] || 0) + 1;
+      if (p.product_type) productTypes[p.product_type] = (productTypes[p.product_type] || 0) + 1;
+      if (p.colour) colours.add(p.colour);
     });
 
-    const genders = await Product.findAll({
-      attributes: [
-        'gender',
-        [fn('COUNT', col('id')), 'count'],
-      ],
-      where: { is_active: true },
-      group: ['gender'],
-      raw: true,
-    });
+    const topTypes = Object.entries(productTypes)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 20)
+      .map(([t]) => t);
 
-    const topTypes = await Product.findAll({
-      attributes: [
-        'product_type',
-        [fn('COUNT', col('id')), 'count'],
-      ],
-      where: { is_active: true },
-      group: ['product_type'],
-      order: [[fn('COUNT', col('id')), 'DESC']],
-      limit: 20,
-      raw: true,
-    });
-
-    const colours = await Product.findAll({
-      attributes: ['colour'],
-      where: { is_active: true },
-      group: ['colour'],
-      raw: true,
-    });
-
-    const summary = {
+    return {
       totalProducts: totalCount,
-      categories: categories.map((c) => `${c.category} (${c.count})`).join(', '),
-      genders: genders.map((g) => `${g.gender} (${g.count})`).join(', '),
-      productTypes: topTypes.map((t) => t.product_type).join(', '),
-      colours: colours.map((c) => c.colour).filter(Boolean).join(', '),
+      categories: Object.entries(categories).map(([c, n]) => `${c} (${n})`).join(', '),
+      genders: Object.entries(genders).map(([g, n]) => `${g} (${n})`).join(', '),
+      productTypes: topTypes.join(', '),
+      colours: [...colours].filter(Boolean).join(', '),
     };
-
-    _catalogCache = summary;
-    _catalogCacheTime = Date.now();
-    return summary;
   } catch (error) {
     console.error('Catalog Summary Error:', error.message);
     return { totalProducts: 0, categories: '', genders: '', productTypes: '', colours: '' };
@@ -194,10 +157,7 @@ const getCatalogSummary = async () => {
  */
 const getProductContext = async (productIds) => {
   try {
-    const products = await Product.findAll({
-      where: { id: productIds },
-    });
-
+    const products = await Product.listByIds(productIds);
     return products.map((p) => ({
       id: p.id,
       title: p.title,

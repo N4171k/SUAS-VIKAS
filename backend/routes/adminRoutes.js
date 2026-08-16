@@ -1,6 +1,5 @@
 const express = require('express');
-const { Op, fn, col, literal } = require('sequelize');
-const { Reservation, Order, Product, Store, User } = require('../models');
+const { Reservation, Product, Store, User } = require('../models');
 const { authenticate, authorize } = require('../middleware/auth');
 const analyticsService = require('../services/analyticsService');
 
@@ -24,24 +23,37 @@ router.get('/analytics', async (req, res, next) => {
 router.get('/reservations', async (req, res, next) => {
   try {
     const { status, storeId, page = 1, limit = 20 } = req.query;
-    const where = {};
-    if (status) where.status = status;
-    if (storeId) where.store_id = storeId;
 
-    const { rows: reservations, count: total } = await Reservation.findAndCountAll({
-      where,
-      include: [
-        { model: Product, as: 'product', attributes: ['id', 'title', 'price', 'image_url'] },
-        { model: Store, as: 'store', attributes: ['id', 'name', 'location'] },
-        { model: User, as: 'user', attributes: ['id', 'name', 'email'] },
-      ],
-      order: [['created_at', 'DESC']],
-      offset: (parseInt(page) - 1) * parseInt(limit),
-      limit: parseInt(limit),
-    });
+    let reservations;
+    if (storeId) {
+      reservations = await Reservation.findByStore(storeId);
+    } else {
+      reservations = await Reservation.findAll();
+    }
+
+    if (status) reservations = reservations.filter((r) => r.status === status);
+    reservations.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+
+    const total = reservations.length;
+    const start = (parseInt(page) - 1) * parseInt(limit);
+    const pageItems = reservations.slice(start, start + parseInt(limit));
+
+    const withDetails = await Promise.all(pageItems.map(async (r) => {
+      const [product, store, user] = await Promise.all([
+        Product.findById(r.product_id),
+        Store.findById(r.store_id),
+        User.findById(r.user_id),
+      ]);
+      return {
+        ...r,
+        product: product ? { id: product.id, title: product.title, price: product.price, image_url: product.image_url } : null,
+        store: store ? { id: store.id, name: store.name, location: store.location } : null,
+        user: user ? { id: user.id, name: user.name, email: user.email } : null,
+      };
+    }));
 
     res.json({
-      reservations,
+      reservations: withDetails,
       pagination: { page: parseInt(page), limit: parseInt(limit), total, totalPages: Math.ceil(total / parseInt(limit)) },
     });
   } catch (error) {
@@ -63,7 +75,7 @@ router.get('/sales', async (req, res, next) => {
 // GET /api/admin/stores
 router.get('/stores', async (req, res, next) => {
   try {
-    const stores = await Store.findAll({ order: [['name', 'ASC']] });
+    const stores = await Store.findAll();
     res.json(stores);
   } catch (error) {
     next(error);

@@ -13,18 +13,12 @@ const authenticate = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if session is still active
-    const session = await Session.findOne({
-      where: { user_id: decoded.userId, token, is_active: true },
-    });
-
+    const session = await Session.findActiveByUserAndToken(decoded.userId, token);
     if (!session) {
       return res.status(401).json({ error: 'Session expired or invalidated.' });
     }
 
-    const user = await User.findByPk(decoded.userId, {
-      attributes: { exclude: ['password_hash'] },
-    });
-
+    const user = await User.findById(decoded.userId);
     if (!user) {
       return res.status(401).json({ error: 'User not found.' });
     }
@@ -47,9 +41,7 @@ const optionalAuth = async (req, res, next) => {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findByPk(decoded.userId, {
-        attributes: { exclude: ['password_hash'] },
-      });
+      const user = await User.findById(decoded.userId);
       if (user) {
         req.user = user;
         req.token = token;

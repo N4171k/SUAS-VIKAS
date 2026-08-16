@@ -1,5 +1,5 @@
 const express = require('express');
-const { Reservation, Product, Store, Inventory } = require('../models');
+const { Reservation, Product, Store } = require('../models');
 const { authenticate } = require('../middleware/auth');
 const reservationService = require('../services/reservationService');
 
@@ -44,11 +44,9 @@ router.post('/create', authenticate, async (req, res, next) => {
 // POST /api/reservations/:id/pay
 router.post('/:id/pay', authenticate, async (req, res, next) => {
   try {
-    const reservation = await Reservation.findOne({
-      where: { id: req.params.id, user_id: req.user.id },
-    });
+    const reservation = await Reservation.findById(req.params.id);
 
-    if (!reservation) {
+    if (!reservation || reservation.user_id !== req.user.id) {
       return res.status(404).json({ error: 'Reservation not found.' });
     }
 
@@ -56,10 +54,9 @@ router.post('/:id/pay', authenticate, async (req, res, next) => {
       return res.status(400).json({ error: `Cannot pay for reservation with status: ${reservation.status}` });
     }
 
-    reservation.status = 'confirmed';
-    await reservation.save();
+    const updated = await Reservation.update(req.params.id, { status: 'confirmed' });
 
-    res.json({ message: 'Payment confirmed.', reservation });
+    res.json({ message: 'Payment confirmed.', reservation: updated });
   } catch (error) {
     next(error);
   }
@@ -68,19 +65,18 @@ router.post('/:id/pay', authenticate, async (req, res, next) => {
 // GET /api/reservations/:id
 router.get('/:id', authenticate, async (req, res, next) => {
   try {
-    const reservation = await Reservation.findOne({
-      where: { id: req.params.id, user_id: req.user.id },
-      include: [
-        { model: Product, as: 'product' },
-        { model: Store, as: 'store' },
-      ],
-    });
+    const reservation = await Reservation.findById(req.params.id);
 
-    if (!reservation) {
+    if (!reservation || reservation.user_id !== req.user.id) {
       return res.status(404).json({ error: 'Reservation not found.' });
     }
 
-    res.json(reservation);
+    const [product, store] = await Promise.all([
+      Product.findById(reservation.product_id),
+      Store.findById(reservation.store_id),
+    ]);
+
+    res.json({ ...reservation, product, store });
   } catch (error) {
     next(error);
   }
@@ -89,15 +85,17 @@ router.get('/:id', authenticate, async (req, res, next) => {
 // GET /api/reservations - List user reservations
 router.get('/', authenticate, async (req, res, next) => {
   try {
-    const reservations = await Reservation.findAll({
-      where: { user_id: req.user.id },
-      include: [
-        { model: Product, as: 'product' },
-        { model: Store, as: 'store' },
-      ],
-      order: [['created_at', 'DESC']],
-    });
-    res.json(reservations);
+    const reservations = await Reservation.findByUser(req.user.id);
+
+    const withDetails = await Promise.all(reservations.map(async (r) => {
+      const [product, store] = await Promise.all([
+        Product.findById(r.product_id),
+        Store.findById(r.store_id),
+      ]);
+      return { ...r, product, store };
+    }));
+
+    res.json(withDetails);
   } catch (error) {
     next(error);
   }

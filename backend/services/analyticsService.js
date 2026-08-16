@@ -1,4 +1,3 @@
-const { Op, fn, col, literal } = require('sequelize');
 const { Order, Reservation, Product, User, Store } = require('../models');
 
 /**
@@ -8,50 +7,61 @@ const getDashboardAnalytics = async () => {
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-  const monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
 
   // Total counts
   const [totalUsers, totalProducts, totalOrders, totalReservations] = await Promise.all([
     User.count(),
-    Product.count({ where: { is_active: true } }),
+    Product.count(),
     Order.count(),
     Reservation.count(),
   ]);
 
-  // Today's metrics
-  const [todayOrders, todayReservations] = await Promise.all([
-    Order.count({ where: { created_at: { [Op.gte]: todayStart } } }),
-    Reservation.count({ where: { created_at: { [Op.gte]: todayStart } } }),
+  // All orders & reservations (needed for date-based aggregations)
+  const [allOrders, allReservations] = await Promise.all([
+    Order.findAll(),
+    Reservation.findAll(),
   ]);
 
+  // Today's metrics
+  const todayOrders = allOrders.filter((o) => new Date(o.createdAt) >= todayStart).length;
+  const todayReservations = allReservations.filter((r) => new Date(r.createdAt) >= todayStart).length;
+
   // Revenue
-  const totalRevenue = await Order.sum('total') || 0;
-  const weekRevenue = await Order.sum('total', {
-    where: { created_at: { [Op.gte]: weekAgo } },
-  }) || 0;
+  const totalRevenue = allOrders.reduce((s, o) => s + parseFloat(o.total || 0), 0);
+  const weekOrders = allOrders.filter((o) => new Date(o.createdAt) >= weekAgo);
+  const weekRevenue = weekOrders.reduce((s, o) => s + parseFloat(o.total || 0), 0);
 
   // Reservation status breakdown
-  const reservationsByStatus = await Reservation.findAll({
-    attributes: ['status', [fn('COUNT', '*'), 'count']],
-    group: ['status'],
+  const reservationsByStatusMap = {};
+  allReservations.forEach((r) => {
+    const s = r.status || 'unknown';
+    reservationsByStatusMap[s] = (reservationsByStatusMap[s] || 0) + 1;
   });
+  const reservationsByStatus = Object.entries(reservationsByStatusMap).map(([status, count]) => ({ status, count }));
 
   // Top categories
-  const topCategories = await Product.findAll({
-    attributes: ['category', [fn('COUNT', '*'), 'count']],
-    where: { is_active: true, category: { [Op.ne]: null } },
-    group: ['category'],
-    order: [[literal('count'), 'DESC']],
-    limit: 10,
+  const products = await Product.scanAllForAnalytics();
+  const categoryCounts = {};
+  products.forEach((p) => {
+    if (!p.category) return;
+    categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
   });
+  const topCategories = Object.entries(categoryCounts)
+    .map(([category, count]) => ({ category, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
 
   // Active reservations per store
-  const activeReservationsPerStore = await Reservation.findAll({
-    attributes: ['store_id', [fn('COUNT', '*'), 'count']],
-    where: { status: { [Op.in]: ['pending', 'confirmed', 'ready'] } },
-    group: ['store_id'],
-    include: [{ model: Store, as: 'store', attributes: ['name'] }],
-  });
+  const activeReservations = allReservations.filter((r) => ['pending', 'confirmed', 'ready'].includes(r.status));
+  const perStoreMap = {};
+  for (const r of activeReservations) {
+    if (!perStoreMap[r.store_id]) {
+      const store = await Store.findById(r.store_id);
+      perStoreMap[r.store_id] = { storeId: r.store_id, storeName: store?.name || r.store_id, count: 0 };
+    }
+    perStoreMap[r.store_id].count++;
+  }
+  const activeReservationsPerStore = Object.values(perStoreMap);
 
   return {
     overview: {
@@ -61,22 +71,12 @@ const getDashboardAnalytics = async () => {
       totalReservations,
       todayOrders,
       todayReservations,
-      totalRevenue: parseFloat(totalRevenue).toFixed(2),
-      weekRevenue: parseFloat(weekRevenue).toFixed(2),
+      totalRevenue: totalRevenue.toFixed(2),
+      weekRevenue: weekRevenue.toFixed(2),
     },
-    reservationsByStatus: reservationsByStatus.map((r) => ({
-      status: r.status,
-      count: parseInt(r.get('count')),
-    })),
-    topCategories: topCategories.map((c) => ({
-      category: c.category,
-      count: parseInt(c.get('count')),
-    })),
-    activeReservationsPerStore: activeReservationsPerStore.map((r) => ({
-      storeId: r.store_id,
-      storeName: r.store?.name,
-      count: parseInt(r.get('count')),
-    })),
+    reservationsByStatus,
+    topCategories,
+    activeReservationsPerStore,
   };
 };
 
@@ -87,23 +87,25 @@ const getSalesData = async (period = '7d') => {
   const days = parseInt(period) || 7;
   const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-  const orders = await Order.findAll({
-    where: { created_at: { [Op.gte]: startDate } },
-    attributes: [
-      [fn('DATE', col('created_at')), 'date'],
-      [fn('COUNT', '*'), 'orderCount'],
-      [fn('SUM', col('total')), 'revenue'],
-    ],
-    group: [fn('DATE', col('created_at'))],
-    order: [[fn('DATE', col('created_at')), 'ASC']],
+  const orders = await Order.findAll();
+  const recent = orders
+    .filter((o) => new Date(o.createdAt) >= startDate)
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+  const byDate = {};
+  recent.forEach((o) => {
+    const date = new Date(o.createdAt).toISOString().slice(0, 10);
+    if (!byDate[date]) byDate[date] = { orderCount: 0, revenue: 0 };
+    byDate[date].orderCount++;
+    byDate[date].revenue += parseFloat(o.total || 0);
   });
 
   return {
     period: `${days} days`,
-    data: orders.map((o) => ({
-      date: o.get('date'),
-      orderCount: parseInt(o.get('orderCount')),
-      revenue: parseFloat(o.get('revenue') || 0).toFixed(2),
+    data: Object.entries(byDate).map(([date, d]) => ({
+      date,
+      orderCount: d.orderCount,
+      revenue: d.revenue.toFixed(2),
     })),
   };
 };

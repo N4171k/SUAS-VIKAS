@@ -15,6 +15,7 @@ frontend/out/
 
 # Database
 backend/*.db
+backend/catalog.json
 
 # OS files
 .DS_Store

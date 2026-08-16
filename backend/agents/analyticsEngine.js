@@ -1,5 +1,4 @@
-const { Op, fn, col, literal } = require('sequelize');
-const { Reservation, Order, Product, Store } = require('../models');
+const { Reservation, Order, Store } = require('../models');
 
 /**
  * Analytics Engine Agent
@@ -12,14 +11,12 @@ const { Reservation, Order, Product, Store } = require('../models');
 const getPeakHours = async (days = 7) => {
   const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-  const reservations = await Reservation.findAll({
-    where: { created_at: { [Op.gte]: startDate } },
-    attributes: ['created_at'],
-  });
+  const reservations = await Reservation.findAll();
+  const recent = reservations.filter((r) => new Date(r.createdAt) >= startDate);
 
   const hourCounts = new Array(24).fill(0);
-  reservations.forEach((r) => {
-    const hour = new Date(r.created_at).getHours();
+  recent.forEach((r) => {
+    const hour = new Date(r.createdAt).getHours();
     hourCounts[hour]++;
   });
 
@@ -35,12 +32,11 @@ const getPeakHours = async (days = 7) => {
 const getCategorySales = async (days = 30) => {
   const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-  const orders = await Order.findAll({
-    where: { created_at: { [Op.gte]: startDate } },
-  });
+  const orders = await Order.findAll();
+  const recent = orders.filter((o) => new Date(o.createdAt) >= startDate);
 
   const categorySales = {};
-  orders.forEach((order) => {
+  recent.forEach((order) => {
     (order.items || []).forEach((item) => {
       const cat = item.category || 'Unknown';
       if (!categorySales[cat]) {
@@ -61,28 +57,26 @@ const getCategorySales = async (days = 30) => {
  */
 const getStorePerformance = async () => {
   const stores = await Store.findAll();
+  const reservations = await Reservation.findAll();
 
-  const storeMetrics = await Promise.all(
-    stores.map(async (store) => {
-      const [totalReservations, pendingReservations, completedReservations] = await Promise.all([
-        Reservation.count({ where: { store_id: store.id } }),
-        Reservation.count({ where: { store_id: store.id, status: 'pending' } }),
-        Reservation.count({ where: { store_id: store.id, status: 'picked_up' } }),
-      ]);
+  const storeMetrics = stores.map((store) => {
+    const storeReservations = reservations.filter((r) => r.store_id === store.id);
+    const pendingReservations = storeReservations.filter((r) => r.status === 'pending').length;
+    const completedReservations = storeReservations.filter((r) => r.status === 'picked_up').length;
+    const totalReservations = storeReservations.length;
 
-      return {
-        storeId: store.id,
-        storeName: store.name,
-        location: store.location,
-        totalReservations,
-        pendingReservations,
-        completedReservations,
-        completionRate: totalReservations > 0
-          ? ((completedReservations / totalReservations) * 100).toFixed(1)
-          : '0.0',
-      };
-    })
-  );
+    return {
+      storeId: store.id,
+      storeName: store.name,
+      location: store.location,
+      totalReservations,
+      pendingReservations,
+      completedReservations,
+      completionRate: totalReservations > 0
+        ? ((completedReservations / totalReservations) * 100).toFixed(1)
+        : '0.0',
+    };
+  });
 
   return storeMetrics;
 };

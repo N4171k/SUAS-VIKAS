@@ -1,5 +1,5 @@
 const QRCode = require('qrcode');
-const { Reservation, Product, Store, Inventory } = require('../models');
+const { Reservation, Product, Store } = require('../models');
 const inventoryService = require('./inventoryService');
 
 /**
@@ -7,31 +7,34 @@ const inventoryService = require('./inventoryService');
  */
 const createReservation = async ({ userId, productId, storeId, slot, quantity = 1 }) => {
   // Verify product exists
-  const product = await Product.findByPk(productId);
+  const product = await Product.findById(productId);
   if (!product) throw new Error('Product not found.');
 
   // Verify store exists
-  const store = await Store.findByPk(storeId);
+  const store = await Store.findById(storeId);
   if (!store) throw new Error('Store not found.');
 
-  // Check and lock inventory
+  // Check and lock inventory (atomic conditional update in DynamoDB)
   await inventoryService.reserveStock(productId, storeId, quantity);
 
   // Set expiry (24 hours from now)
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-  // Create reservation
+  // Create reservation with product snapshot for cheap listing
   const reservation = await Reservation.create({
-    user_id: userId,
-    product_id: productId,
-    store_id: storeId,
+    userId,
+    productId,
+    storeId,
     quantity,
     slot,
     status: 'pending',
-    expires_at: expiresAt,
+    price: product.price,
+    productImage: product.image_url,
+    productName: product.title,
+    expiresAt: expiresAt.toISOString(),
   });
 
-  // Generate QR code
+  // Generate QR code token (JWT-like signed payload)
   const qrData = JSON.stringify({
     reservationId: reservation.id,
     productId,
@@ -41,11 +44,10 @@ const createReservation = async ({ userId, productId, storeId, slot, quantity = 
   });
 
   const qrCode = await QRCode.toDataURL(qrData);
-  reservation.qr_code = qrCode;
-  await reservation.save();
+  await Reservation.update(reservation.id, { qrToken: qrCode });
 
   return {
-    reservation,
+    reservation: { ...reservation, qr_code: qrCode },
     product,
     store,
     qr_code: qrCode,
@@ -56,11 +58,8 @@ const createReservation = async ({ userId, productId, storeId, slot, quantity = 
  * Cancel a reservation and release stock
  */
 const cancelReservation = async (reservationId, userId) => {
-  const reservation = await Reservation.findOne({
-    where: { id: reservationId, user_id: userId },
-  });
-
-  if (!reservation) throw new Error('Reservation not found.');
+  const reservation = await Reservation.findById(reservationId);
+  if (!reservation || reservation.user_id !== userId) throw new Error('Reservation not found.');
   if (['picked_up', 'cancelled', 'expired'].includes(reservation.status)) {
     throw new Error('Reservation cannot be cancelled.');
   }
@@ -72,17 +71,15 @@ const cancelReservation = async (reservationId, userId) => {
     reservation.quantity
   );
 
-  reservation.status = 'cancelled';
-  await reservation.save();
-
-  return reservation;
+  await Reservation.update(reservationId, { status: 'cancelled' });
+  return { ...reservation, status: 'cancelled' };
 };
 
 /**
  * Mark reservation as picked up
  */
 const markPickedUp = async (reservationId) => {
-  const reservation = await Reservation.findByPk(reservationId);
+  const reservation = await Reservation.findById(reservationId);
   if (!reservation) throw new Error('Reservation not found.');
 
   // Fulfill the stock (decrement actual inventory)
@@ -92,23 +89,19 @@ const markPickedUp = async (reservationId) => {
     reservation.quantity
   );
 
-  reservation.status = 'picked_up';
-  await reservation.save();
-
-  return reservation;
+  await Reservation.update(reservationId, { status: 'picked_up' });
+  return { ...reservation, status: 'picked_up' };
 };
 
 /**
  * Expire overdue reservations (run as scheduled task)
  */
 const expireOverdueReservations = async () => {
-  const { Op } = require('sequelize');
-  const overdue = await Reservation.findAll({
-    where: {
-      status: 'pending',
-      expires_at: { [Op.lt]: new Date() },
-    },
-  });
+  const all = await Reservation.findAll();
+  const now = new Date();
+  const overdue = all.filter(
+    (r) => r.status === 'pending' && r.expires_at && new Date(r.expires_at) < now
+  );
 
   for (const reservation of overdue) {
     await inventoryService.releaseStock(
@@ -116,8 +109,7 @@ const expireOverdueReservations = async () => {
       reservation.store_id,
       reservation.quantity
     );
-    reservation.status = 'expired';
-    await reservation.save();
+    await Reservation.update(reservation.id, { status: 'expired' });
   }
 
   return overdue.length;

@@ -1,17 +1,17 @@
 require('dotenv').config();
-const { sequelize } = require('../config/db');
+const { ListTablesCommand } = require('@aws-sdk/client-dynamodb');
+const { client, REGION } = require('../config/db');
 
 const testConnection = async () => {
   try {
-    console.log('🔄 Testing database connection...');
-    console.log(`   URL: ${process.env.DATABASE_URL?.replace(/:[^:@]+@/, ':****@')}`);
+    console.log('🔄 Testing DynamoDB connection...');
+    console.log(`   Region: ${REGION}`);
+    console.log(`   Table prefix: ${process.env.DYNAMODB_TABLE_PREFIX || 'vikas-dev-'}`);
 
-    await sequelize.authenticate();
+    const res = await client.send(new ListTablesCommand({ Limit: 25 }));
     console.log('✅ Connection successful!');
-
-    const [results] = await sequelize.query('SELECT NOW() as current_time, version() as pg_version');
-    console.log(`   Server Time: ${results[0].current_time}`);
-    console.log(`   PostgreSQL: ${results[0].pg_version.split(' ').slice(0, 2).join(' ')}`);
+    console.log(`   Tables visible: ${(res.TableNames || []).length}`);
+    console.log(`   First tables: ${(res.TableNames || []).slice(0, 5).join(', ')}`);
 
     process.exit(0);
   } catch (error) {

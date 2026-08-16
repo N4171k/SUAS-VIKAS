@@ -1,5 +1,4 @@
 const { Product, Order } = require('../models');
-const { Op } = require('sequelize');
 
 /**
  * Personalization Agent
@@ -12,11 +11,7 @@ const { Op } = require('sequelize');
 const getPersonalizedRecommendations = async (userId, limit = 10) => {
   try {
     // Get user's past orders
-    const orders = await Order.findAll({
-      where: { user_id: userId },
-      order: [['created_at', 'DESC']],
-      limit: 10,
-    });
+    const orders = await Order.findByUser(userId);
 
     // Extract categories and brands from past purchases
     const categories = new Set();
@@ -32,10 +27,7 @@ const getPersonalizedRecommendations = async (userId, limit = 10) => {
 
     // Get product details for purchased items
     if (purchasedIds.size > 0) {
-      const purchasedProducts = await Product.findAll({
-        where: { id: Array.from(purchasedIds) },
-      });
-
+      const purchasedProducts = await Product.listByIds([...purchasedIds]);
       purchasedProducts.forEach((p) => {
         if (p.category) categories.add(p.category);
         if (p.brand) brands.add(p.brand);
@@ -43,36 +35,22 @@ const getPersonalizedRecommendations = async (userId, limit = 10) => {
     }
 
     // Find similar products not yet purchased
-    const where = {
-      is_active: true,
-      id: { [Op.notIn]: Array.from(purchasedIds) },
-    };
+    const all = await Product.topRated(500);
+    let recommendations = all.filter((p) => p.is_active && !purchasedIds.has(p.id));
 
     if (categories.size > 0 || brands.size > 0) {
-      where[Op.or] = [];
-      if (categories.size > 0) {
-        where[Op.or].push({ category: { [Op.in]: Array.from(categories) } });
-      }
-      if (brands.size > 0) {
-        where[Op.or].push({ brand: { [Op.in]: Array.from(brands) } });
+      const categoryMatch = recommendations.filter((p) => categories.has(p.category));
+      const brandMatch = recommendations.filter((p) => brands.has(p.brand));
+      if (categoryMatch.length > 0 || brandMatch.length > 0) {
+        recommendations = [...new Set([...categoryMatch, ...brandMatch])];
       }
     }
 
-    const recommendations = await Product.findAll({
-      where,
-      limit,
-      order: [['rating', 'DESC'], ['rating_count', 'DESC']],
-    });
-
-    return recommendations;
+    return recommendations.slice(0, limit);
   } catch (error) {
     console.error('Personalization Error:', error.message);
     // Fallback: return top-rated products
-    return Product.findAll({
-      where: { is_active: true },
-      limit,
-      order: [['rating', 'DESC']],
-    });
+    return Product.topRated(limit);
   }
 };
 
@@ -83,12 +61,11 @@ const getTrendingProducts = async (limit = 10) => {
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
   // Get recent orders and count product frequency
-  const recentOrders = await Order.findAll({
-    where: { created_at: { [Op.gte]: weekAgo } },
-  });
+  const recentOrders = await Order.findAll();
+  const recent = recentOrders.filter((o) => new Date(o.createdAt) >= weekAgo);
 
   const productCounts = {};
-  recentOrders.forEach((order) => {
+  recent.forEach((order) => {
     (order.items || []).forEach((item) => {
       productCounts[item.productId] = (productCounts[item.productId] || 0) + item.quantity;
     });
@@ -97,19 +74,14 @@ const getTrendingProducts = async (limit = 10) => {
   const sortedIds = Object.entries(productCounts)
     .sort(([, a], [, b]) => b - a)
     .slice(0, limit)
-    .map(([id]) => parseInt(id));
+    .map(([id]) => id);
 
   if (sortedIds.length === 0) {
-    return Product.findAll({
-      where: { is_active: true },
-      limit,
-      order: [['rating', 'DESC']],
-    });
+    return Product.topRated(limit);
   }
 
-  return Product.findAll({
-    where: { id: { [Op.in]: sortedIds } },
-  });
+  const products = await Product.listByIds(sortedIds);
+  return products;
 };
 
 module.exports = { getPersonalizedRecommendations, getTrendingProducts };

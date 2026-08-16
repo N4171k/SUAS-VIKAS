@@ -2,7 +2,6 @@ const express = require('express');
 const { authenticate, optionalAuth } = require('../middleware/auth');
 const { getRecommendations } = require('../agents/recommendationAgent');
 const { Product } = require('../models');
-const { Op } = require('sequelize');
 
 const router = express.Router();
 
@@ -30,11 +29,7 @@ router.get('/', authenticate, async (req, res, next) => {
       (user.style_preferences || []).length > 0;
 
     if (!hasPreferences) {
-      const products = await Product.findAll({
-        where: { is_active: true },
-        order: [['rating', 'DESC'], ['rating_count', 'DESC']],
-        limit,
-      });
+      const products = await Product.topRated(limit);
       return res.json({
         products,
         meta: {
@@ -60,11 +55,7 @@ router.get('/', authenticate, async (req, res, next) => {
 router.get('/trending', optionalAuth, async (req, res, next) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 8, 20);
-    const products = await Product.findAll({
-      where: { is_active: true },
-      order: [['rating', 'DESC'], ['rating_count', 'DESC']],
-      limit,
-    });
+    const products = await Product.topRated(limit);
     res.json({
       products,
       meta: {

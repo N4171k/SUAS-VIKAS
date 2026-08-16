@@ -21,7 +21,7 @@ router.post('/register', [
 
     const { name, email, password, role, gender, clothing_size, footwear_size, favourite_colors, style_preferences } = req.body;
 
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await User.findByEmail(email);
     if (existingUser) {
       return res.status(409).json({ error: 'Email already registered.' });
     }
@@ -46,11 +46,11 @@ router.post('/register', [
     );
 
     await Session.create({
-      user_id: user.id,
+      userId: user.id,
       token,
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      ip_address: req.ip,
-      user_agent: req.headers['user-agent'],
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
     });
 
     res.status(201).json({
@@ -80,12 +80,13 @@ router.post('/login', [
 
     const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findByEmail(email);
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password_hash);
+    const userRow = await getRawUser(email);
+    const isMatch = await bcrypt.compare(password, userRow.password_hash);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid credentials.' });
     }
@@ -97,11 +98,11 @@ router.post('/login', [
     );
 
     await Session.create({
-      user_id: user.id,
+      userId: user.id,
       token,
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      ip_address: req.ip,
-      user_agent: req.headers['user-agent'],
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
     });
 
     res.json({
@@ -117,10 +118,7 @@ router.post('/login', [
 // POST /api/auth/logout
 router.post('/logout', authenticate, async (req, res, next) => {
   try {
-    await Session.update(
-      { is_active: false },
-      { where: { user_id: req.user.id, token: req.token } }
-    );
+    await Session.deactivateByUserAndToken(req.user.id, req.token);
     res.json({ message: 'Logged out successfully.' });
   } catch (error) {
     next(error);
@@ -148,9 +146,7 @@ router.patch('/preferences', authenticate, async (req, res, next) => {
       return res.status(400).json({ error: 'No preference fields provided.' });
     }
 
-    await req.user.update(updates);
-
-    const fresh = await req.user.reload();
+    const fresh = await User.update(req.user.id, updates);
 
     res.json({
       message: 'Preferences updated successfully.',
@@ -172,3 +168,17 @@ router.patch('/preferences', authenticate, async (req, res, next) => {
 });
 
 module.exports = router;
+
+// Internal: fetch raw user row (includes password_hash) for login
+async function getRawUser(email) {
+  const { TABLES, INDEXES } = require('../config/db');
+  const { query } = require('../models/base');
+  const { items } = await query({
+    TableName: TABLES.Users,
+    IndexName: INDEXES.emailIndex,
+    KeyConditionExpression: 'email = :email',
+    ExpressionAttributeValues: { ':email': email },
+    Limit: 1,
+  });
+  return items[0] || null;
+}

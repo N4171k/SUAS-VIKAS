@@ -2,15 +2,14 @@ const errorHandler = (err, req, res, next) => {
   console.error('❌ Error:', err.message);
   console.error(err.stack);
 
-  // Sequelize validation errors
-  if (err.name === 'SequelizeValidationError') {
-    const messages = err.errors.map((e) => e.message);
-    return res.status(400).json({ error: 'Validation failed', details: messages });
+  // DynamoDB conditional check (e.g. stock reservation)
+  if (err.name === 'ConditionalCheckFailedException') {
+    return res.status(409).json({ error: 'Conditional check failed. Resource state changed.' });
   }
 
-  // Sequelize unique constraint
-  if (err.name === 'SequelizeUniqueConstraintError') {
-    return res.status(409).json({ error: 'Resource already exists.' });
+  // DynamoDB item already exists
+  if (err.name === 'ItemCollectionSizeLimitExceededException') {
+    return res.status(409).json({ error: 'Item collection size limit exceeded.' });
   }
 
   // JWT errors

@@ -5,12 +5,11 @@
  *  1. Build a rich preference query from the user profile
  *  2. Retrieve candidate products via keyword RAG search
  *  3. Additionally pull high-rated products matching gender/colour/style directly
- *  4. Filter by inventory availability (with graceful ±1 size fallback)
+ *  4. Filter by inventory availability
  *  5. Score every candidate against preferences and rank them
  *  6. Return structured JSON: { products, meta }
  */
 
-const { Op, literal, fn, col } = require('sequelize');
 const { Product, Inventory } = require('../models');
 const { searchProducts } = require('../services/rag');
 
@@ -29,7 +28,6 @@ function adjacentSizes(size, order) {
 }
 
 // ── Colour normalisation ──────────────────────────────────────────────────
-// Maps user-selected colour names to terms likely in the catalogue
 const COLOUR_ALIASES = {
   Navy: ['navy', 'blue', 'indigo'],
   Maroon: ['maroon', 'red', 'burgundy'],
@@ -76,48 +74,18 @@ function buildPreferenceQuery(user) {
 }
 
 // ── Inventory availability check ─────────────────────────────────────────
-async function getAvailableProductIds(clothingSizes, footwearSizes) {
+async function getAvailableProductIds() {
   try {
-    const allSizes = [
-      ...(clothingSizes || []),
-      ...(footwearSizes || []),
-    ];
-
-    // Try size-aware availability first
-    if (allSizes.length > 0) {
-      const rows = await Inventory.findAll({
-        attributes: ['product_id'],
-        where: {
-          size: { [Op.in]: allSizes },
-          [Op.and]: literal('"quantity" - "reserved_quantity" > 0'),
-        },
-        group: ['product_id'],
-        raw: true,
-      });
-      if (rows.length > 0) {
-        return { ids: rows.map((r) => r.product_id), sizeFiltered: true };
-      }
-    }
-
-    // Fallback: any available inventory (size column may not exist yet / be null)
-    const fallback = await Inventory.findAll({
-      attributes: ['product_id'],
-      where: {
-        quantity: { [Op.gt]: 0 },
-      },
-      group: ['product_id'],
-      raw: true,
-    });
-    return { ids: fallback.map((r) => r.product_id), sizeFiltered: false };
+    const ids = await Inventory.availableProductIds();
+    return { ids, sizeFiltered: false };
   } catch (err) {
     console.error('[RecommendationAgent] Inventory query error:', err.message);
-    // Return empty to allow product-only fallback
     return { ids: [], sizeFiltered: false };
   }
 }
 
 // ── Per-product preference scorer ────────────────────────────────────────
-function scoreProduct(product, user, clothingSizesSet) {
+function scoreProduct(product, user) {
   let score = 0;
   const reasons = [];
 
@@ -151,7 +119,7 @@ function scoreProduct(product, user, clothingSizesSet) {
   const userStyles = user.style_preferences || [];
   userStyles.forEach((s) => {
     const terms = styleTerms(s);
-    if (terms.some((t) => usage.includes(t) || prodType.includes(t) || subCat.includes(t))) {
+    if (terms.some((t) => usage.includes(t) || prodType.includes(t) || subCat.includes(t) || title.includes(t))) {
       score += 6;
       reasons.push(`style match (${s})`);
     }
@@ -162,32 +130,21 @@ function scoreProduct(product, user, clothingSizesSet) {
   if (rating >= 4.5) { score += 4; reasons.push('top rated'); }
   else if (rating >= 4.0) { score += 2; }
 
-  // Bonus: size mentioned in title (rough heuristic since catalogue has no size field)
-  if (clothingSizesSet.size > 0) {
-    [...clothingSizesSet].forEach((sz) => {
-      if (title.includes(sz.toLowerCase())) {
-        score += 3;
-        reasons.push(`size hint (${sz})`);
-      }
-    });
-  }
-
   return { score, reasons: [...new Set(reasons)] };
 }
 
 // ── Main agent function ───────────────────────────────────────────────────
 /**
- * @param {object} user  — full Sequelize User instance
+ * @param {object} user  — full API user object (from DynamoDB)
  * @param {number} limit — max products to return
  * @returns {object}     — { products: [...], meta: {...} }
  */
 async function getRecommendations(user, limit = 12) {
   const startTime = Date.now();
 
-  // 1. Compute adjacent sizes
+  // 1. Compute adjacent sizes (used for meta only; DynamoDB inventory has no size)
   const clothingSizes = adjacentSizes(user.clothing_size, CLOTHING_ORDER);
   const footwearSizes  = adjacentSizes(user.footwear_size,  FOOTWEAR_ORDER);
-  const clothingSizesSet = new Set(clothingSizes || []);
 
   // 2. Build RAG query string
   const query = buildPreferenceQuery(user);
@@ -195,42 +152,7 @@ async function getRecommendations(user, limit = 12) {
   // 3. Retrieve candidates via RAG (keyword search)
   const [ragResults, directResults] = await Promise.all([
     searchProducts(query, 60).catch(() => []),
-
-    // Additional direct DB fetch: gender + colour match
-    (async () => {
-      try {
-        const where = { is_active: true };
-        const orClauses = [];
-
-        if (user.gender) {
-          orClauses.push({ gender: { [Op.iLike]: `%${user.gender}%` } });
-        }
-
-        (user.favourite_colors || []).forEach((c) => {
-          colourTerms(c).forEach((t) => {
-            orClauses.push({ colour: { [Op.iLike]: `%${t}%` } });
-          });
-        });
-
-        (user.style_preferences || []).forEach((s) => {
-          styleTerms(s).forEach((t) => {
-            orClauses.push({ usage:        { [Op.iLike]: `%${t}%` } });
-            orClauses.push({ product_type: { [Op.iLike]: `%${t}%` } });
-          });
-        });
-
-        if (orClauses.length > 0) where[Op.or] = orClauses;
-
-        return await Product.findAll({
-          where,
-          order: [['rating', 'DESC'], ['rating_count', 'DESC']],
-          limit: 60,
-        });
-      } catch (e) {
-        console.error('[RecommendationAgent] Direct query error:', e.message);
-        return [];
-      }
-    })(),
+    Product.topRated(60).catch(() => []),
   ]);
 
   // 4. Merge and deduplicate candidates
@@ -244,9 +166,7 @@ async function getRecommendations(user, limit = 12) {
   }
 
   // 5. Inventory availability filter
-  const { ids: availableIds, sizeFiltered } = await getAvailableProductIds(
-    clothingSizes, footwearSizes
-  );
+  const { ids: availableIds, sizeFiltered } = await getAvailableProductIds();
 
   let filtered = candidates;
   if (availableIds.length > 0) {
@@ -257,15 +177,7 @@ async function getRecommendations(user, limit = 12) {
   // If no candidates survive, fall back to top-rated available products
   if (filtered.length < 4) {
     try {
-      const topRated = await Product.findAll({
-        where: {
-          is_active: true,
-          ...(availableIds.length > 0 ? { id: { [Op.in]: availableIds.slice(0, 500) } } : {}),
-        },
-        order: [['rating', 'DESC'], ['rating_count', 'DESC']],
-        limit: limit,
-      });
-      // Merge without duplicates
+      const topRated = await Product.topRated(limit * 2);
       const extra = topRated.filter((p) => !seen.has(p.id));
       filtered = [...filtered, ...extra].slice(0, limit);
     } catch (e) {
@@ -275,7 +187,7 @@ async function getRecommendations(user, limit = 12) {
 
   // 6. Score every candidate
   const scored = filtered.map((p) => {
-    const { score, reasons } = scoreProduct(p, user, clothingSizesSet);
+    const { score, reasons } = scoreProduct(p, user);
     return { product: p, score, reasons };
   });
 
@@ -289,21 +201,7 @@ async function getRecommendations(user, limit = 12) {
 
   // 7. Build structured JSON output
   const products = top.map(({ product: p, score, reasons }) => ({
-    id:           p.id,
-    title:        p.title,
-    price:        p.price,
-    original_price: p.original_price,
-    category:     p.category,
-    sub_category: p.sub_category,
-    product_type: p.product_type,
-    gender:       p.gender,
-    colour:       p.colour,
-    usage:        p.usage,
-    brand:        p.brand,
-    rating:       p.rating,
-    rating_count: p.rating_count,
-    image_url:    p.image_url,
-    is_active:    p.is_active,
+    ...p,
     // Recommendation metadata
     _match_score:   score,
     _match_reasons: reasons,
