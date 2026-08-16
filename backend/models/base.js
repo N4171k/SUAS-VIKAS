@@ -11,18 +11,45 @@ const { docClient } = require('../config/db');
 
 const nowISO = () => new Date().toISOString();
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const THROTTLED = ['ProvisionedThroughputExceededException', 'ThrottlingException'];
+
+/**
+ * Retry throttled single-item operations with short backoff so API requests
+ * ride through burst-capacity dips on provisioned tables.
+ */
+async function withThrottleRetry(fn, { maxRetries = 6 } = {}) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (!THROTTLED.includes(err.name) || attempt >= maxRetries) throw err;
+      const delay = Math.min(2000, 100 * 2 ** attempt);
+      console.warn(`⚠️  ${err.name} — retry ${attempt + 1}/${maxRetries} in ${delay}ms`);
+      await sleep(delay);
+    }
+  }
+}
+
 async function getItem(TableName, Key) {
-  const res = await docClient.send(new GetCommand({ TableName, Key }));
-  return res.Item || null;
+  return withThrottleRetry(async () => {
+    const res = await docClient.send(new GetCommand({ TableName, Key }));
+    return res.Item || null;
+  });
 }
 
 async function putItem(TableName, Item) {
-  await docClient.send(new PutCommand({ TableName, Item }));
-  return Item;
+  return withThrottleRetry(async () => {
+    await docClient.send(new PutCommand({ TableName, Item }));
+    return Item;
+  });
 }
 
 async function deleteItem(TableName, Key) {
-  await docClient.send(new DeleteCommand({ TableName, Key }));
+  return withThrottleRetry(async () => {
+    await docClient.send(new DeleteCommand({ TableName, Key }));
+  });
 }
 
 /**
@@ -52,33 +79,32 @@ function buildUpdateExpression(updates) {
 async function updateItem(TableName, Key, updates) {
   const expr = buildUpdateExpression(updates);
   if (!expr) return getItem(TableName, Key);
-  await docClient.send(new UpdateCommand({
-    TableName,
-    Key,
-    ...expr,
-    ReturnValues: 'ALL_NEW',
-  }));
-  return getItem(TableName, Key);
+  return withThrottleRetry(async () => {
+    await docClient.send(new UpdateCommand({
+      TableName,
+      Key,
+      ...expr,
+      ReturnValues: 'ALL_NEW',
+    }));
+  }).then(() => getItem(TableName, Key));
 }
 
 async function query({ TableName, IndexName, KeyConditionExpression, ExpressionAttributeNames, ExpressionAttributeValues, Limit, ScanIndexForward, ExclusiveStartKey, FilterExpression }) {
-  const res = await docClient.send(new QueryCommand({
-    TableName,
-    IndexName,
-    KeyConditionExpression,
-    ExpressionAttributeNames,
-    ExpressionAttributeValues,
-    Limit,
-    ScanIndexForward,
-    ExclusiveStartKey,
-    FilterExpression,
-  }));
-  return { items: res.Items || [], lastKey: res.LastEvaluatedKey || null };
+  return withThrottleRetry(async () => {
+    const res = await docClient.send(new QueryCommand({
+      TableName,
+      IndexName,
+      KeyConditionExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      Limit,
+      ScanIndexForward,
+      ExclusiveStartKey,
+      FilterExpression,
+    }));
+    return { items: res.Items || [], lastKey: res.LastEvaluatedKey || null };
+  });
 }
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-const THROTTLED = ['ProvisionedThroughputExceededException', 'ThrottlingException'];
 
 /**
  * Scan a table (or index) with pagination and adaptive pacing so scans
@@ -163,4 +189,5 @@ module.exports = {
   query,
   scanAll,
   batchGet,
+  withThrottleRetry,
 };
