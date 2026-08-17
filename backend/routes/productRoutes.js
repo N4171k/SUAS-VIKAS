@@ -1,8 +1,14 @@
 const express = require('express');
 const { Product, Inventory, Store, User } = require('../models');
 const { optionalAuth, authenticate } = require('../middleware/auth');
+const homepageData = require('../homepage-data.json');
 
 const router = express.Router();
+
+// GET /api/products/homepage - Lightweight homepage payload for first render
+router.get('/homepage', (req, res) => {
+  res.json(homepageData);
+});
 
 // GET /api/products - List products with filtering, search, pagination
 router.get('/', optionalAuth, async (req, res, next) => {

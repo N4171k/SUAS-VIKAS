@@ -20,15 +20,13 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [productsRes, categoriesRes] = await Promise.all([
-          api.get('/products?limit=8&sort=rating&order=DESC'),
-          api.get('/products/meta/categories'),
-        ]);
-        setFeaturedProducts(productsRes.data.products || []);
-        const cats = categoriesRes.data || [];
-        setCategories(cats.length > 0 ? cats : ['Apparel', 'Footwear', 'Accessories', 'Sporting Goods']);
+        const res = await api.get('/products/homepage');
+        setFeaturedProducts(res.data.featuredProducts || []);
+        setCategories(res.data.categories || ['Apparel', 'Footwear', 'Accessories', 'Sporting Goods']);
       } catch (err) {
         console.error('Failed to fetch homepage data:', err);
+        setFeaturedProducts([]);
+        setCategories(['Apparel', 'Footwear', 'Accessories', 'Sporting Goods']);
       } finally {
         setLoading(false);
       }
