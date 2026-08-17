@@ -4,8 +4,23 @@ const { client, TABLES } = require('../config/db');
 
 /**
  * Create any missing VIKAS DynamoDB tables (idempotent — existing tables are skipped).
- * All tables use PAY_PER_REQUEST billing and match the schemas already live in AWS.
+ * All tables use provisioned billing and stay scoped to the shared vikas-* prefix.
  */
+const BILLING_MODE = (process.env.DYNAMODB_TABLE_BILLING_MODE || 'PROVISIONED').toUpperCase();
+const READ_CAPACITY_UNITS = Number(process.env.DYNAMODB_READ_CAPACITY_UNITS || 25);
+const WRITE_CAPACITY_UNITS = Number(process.env.DYNAMODB_WRITE_CAPACITY_UNITS || 25);
+const TABLE_PREFIX = process.env.DYNAMODB_TABLE_PREFIX || 'vikas-dev-';
+const IS_PROVISIONED = BILLING_MODE === 'PROVISIONED';
+
+if (!TABLE_PREFIX.startsWith('vikas-')) {
+  throw new Error(`Refusing to manage non-vikas tables: ${TABLE_PREFIX}`);
+}
+
+const throughput = () => ({
+  ReadCapacityUnits: READ_CAPACITY_UNITS,
+  WriteCapacityUnits: WRITE_CAPACITY_UNITS,
+});
+
 const TABLE_DEFINITIONS = [
   {
     name: TABLES.Users,
@@ -177,6 +192,20 @@ const tableExists = async (name) => {
   }
 };
 
+const buildCreateTableInput = (def) => ({
+  TableName: def.name,
+  KeySchema: def.keys,
+  AttributeDefinitions: def.attrs,
+  GlobalSecondaryIndexes: def.gsis.length
+    ? def.gsis.map((index) => ({
+      ...index,
+      ...(IS_PROVISIONED ? { ProvisionedThroughput: throughput() } : {}),
+    }))
+    : undefined,
+  BillingMode: BILLING_MODE,
+  ...(IS_PROVISIONED ? { ProvisionedThroughput: throughput() } : {}),
+});
+
 (async () => {
   try {
     let created = 0;
@@ -185,13 +214,7 @@ const tableExists = async (name) => {
         console.log(`⏭️  Skipping (exists): ${def.name}`);
         continue;
       }
-      await client.send(new CreateTableCommand({
-        TableName: def.name,
-        KeySchema: def.keys,
-        AttributeDefinitions: def.attrs,
-        GlobalSecondaryIndexes: def.gsis.length ? def.gsis : undefined,
-        BillingMode: 'PAY_PER_REQUEST',
-      }));
+      await client.send(new CreateTableCommand(buildCreateTableInput(def)));
       console.log(`✅ Created: ${def.name}`);
       created++;
     }

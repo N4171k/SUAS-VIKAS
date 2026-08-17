@@ -11,7 +11,8 @@
     "seed:54": "node scripts/seedVIKAS54.js",
     "test:connection": "node scripts/testConnection.js",
     "tables:list": "node scripts/listTables.js",
-    "tables:create": "node scripts/createTables.js"
+    "tables:create": "node scripts/createTables.js",
+    "tables:migrate-provisioned": "node scripts/migrateProvisionedTables.js"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1111.0",
