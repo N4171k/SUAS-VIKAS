@@ -1,38 +1,26 @@
-// Server component -- holds generateStaticParams so output:'export' build succeeds.
-// All interactive UI lives in ProductDetailClient ('use client').
+import fs from 'fs';
+import path from 'path';
 import ProductDetailClient from './ProductDetailClient';
 
-// Fetch all product IDs for static export
+const CATALOG_PATH = path.join(process.cwd(), '..', 'backend', 'catalog.json');
+
+// Static export needs all product paths at build time, so we read the local
+// catalog snapshot instead of calling the live API during Vercel build.
 export async function generateStaticParams() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://suas-vikas.vercel.app/api';
-    
-    // Fetch all products with a high limit to avoid pagination
-    const res = await fetch(`${baseUrl}/products?limit=10000`, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
-    });
-    
-    if (!res.ok) {
-      console.warn('Failed to fetch products for static generation');
-      return [{ id: 'loading' }]; // Fallback
-    }
-    
-    const data = await res.json();
-    const products = data.products || data || [];
-    
-    // Map product IDs to params, ensuring they're strings
-    const params = products.map((product) => ({
-      id: String(product.id),
-    }));
-    
-    // Always include fallback
-    if (!params.length) params.push({ id: 'loading' });
-    
-    console.log(`✅ Generated static params for ${params.length} products`);
-    return params;
+    const rawCatalog = fs.readFileSync(CATALOG_PATH, 'utf8');
+    const products = JSON.parse(rawCatalog);
+
+    const params = products
+      .filter((product) => product && (product.id || product.productId))
+      .map((product) => ({
+        id: String(product.id || product.productId),
+      }));
+
+    return params.length ? params : [{ id: 'loading' }];
   } catch (error) {
     console.error('❌ Error in generateStaticParams:', error);
-    return [{ id: 'loading' }]; // Fallback on error
+    return [{ id: 'loading' }];
   }
 }
 
