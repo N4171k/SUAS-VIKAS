@@ -1,90 +1,128 @@
 {
   "featuredProducts": [
     {
-      "id": "SHOFTURVE4VZZWCF",
-      "title": "Walking Shoes For Men  (Blue)",
-      "price": 474,
-      "original_price": 999,
-      "category": "Footwear",
-      "image_url": "https://rukminim1.flixcart.com/image/128/128/kctf0cw0/shoe/h/f/w/7001230-8-bonexy-blue-original-imafturucuhf9wdy.jpeg?q=70",
-      "brand": "Bone",
-      "rating": 5
-    },
-    {
-      "id": "KTAFZFX7MGG3ZTYP",
-      "title": "Men Solid Cotton Blend Straight Kurta  (Red)",
-      "price": 390,
-      "original_price": 1095,
+      "id": "B0DSBXZY87",
+      "title": "GEEK LIGHTING Mens Waffle Polo Shirts Short Sleeve Summer Casual T-Shirts Moisture Wicking Collared Golf Shirt with Pocket",
+      "price": 20,
+      "original_price": 40.99,
       "category": "Clothing and Accessories",
-      "image_url": "https://rukminim1.flixcart.com/image/128/128/kk01pjk0/kurta/t/c/y/m-ktkt-colors-mahir-original-imafzfx7ryg2e3az.jpeg?q=70",
-      "brand": "Mah",
+      "image_url": "https://m.media-amazon.com/images/I/31p9m3s-jQL.jpg",
+      "brand": "GEEK LIGHTING Store",
       "rating": 5
     },
     {
-      "id": "TSHFZ3JDHSHGRZXY",
-      "title": "Mesh Men Round Neck White T-Shirt",
-      "price": 1689,
-      "original_price": 2599,
+      "id": "B0DK5FZ325",
+      "title": "Rouen Mens Golf Shirt Moisture Wicking Dry Fit Performance Stripe Casual Collared Short Sleeve Golf Polo Shirts for Men",
+      "price": 32.95,
+      "original_price": 49,
       "category": "Clothing and Accessories",
-      "image_url": "https://rukminim1.flixcart.com/image/128/128/kfeamq80-0/t-shirt/v/3/w/m-fj3179-reebok-classics-original-imafvv6jegg4njx3.jpeg?q=70",
-      "brand": "REEBOK CLASSI",
-      "rating": 5
+      "image_url": "https://m.media-amazon.com/images/I/31J1ttvfybL.jpg",
+      "brand": "Rouen Store",
+      "rating": 4.8
     },
     {
-      "id": "TSHFNDPT7PH3GWFN",
-      "title": "Printed Men Hooded Neck Black T-Shirt",
-      "price": 975,
-      "original_price": 1399,
+      "id": "B0DPQC1NSV",
+      "title": "M MAELREG Mens Golf Shirts Dry Fit Moisture Wicking Performance Sports Short Sleeve Striped Collared Polo Shirts for Men",
+      "price": 32.95,
+      "original_price": 49,
       "category": "Clothing and Accessories",
-      "image_url": "https://rukminim1.flixcart.com/image/128/128/k4hcjgw0/t-shirt/v/2/j/s-at-blk03-attiitude-original-imafndupn5fbzreu.jpeg?q=70",
-      "brand": "ATTIITU",
-      "rating": 5
+      "image_url": "https://m.media-amazon.com/images/I/41HmHHvchRL.jpg",
+      "brand": "M MAELREG Store",
+      "rating": 4.8
     },
     {
-      "id": "VESEG9VF5HBQFR5Z",
-      "title": "TeeMoods Men Vest",
-      "price": 299,
-      "original_price": 699,
+      "id": "B01GH5JOJY",
+      "title": "Under Armour Men's Tech Golf Polo",
+      "price": 23.69,
+      "original_price": 39.99,
       "category": "Clothing and Accessories",
-      "image_url": "https://rukminim1.flixcart.com/image/128/128/vest/r/5/z/tm-1692white-teemoods-s-original-imaeg8gwzzvyhaum.jpeg?q=70",
-      "brand": null,
-      "rating": 5
+      "image_url": "https://m.media-amazon.com/images/I/31NsrsS4XrL.jpg",
+      "brand": "Under Armour Store",
+      "rating": 4.7
     },
     {
-      "id": "SHTFG7FMWDDNYFEY",
-      "title": "Men Regular Fit Printed Spread Collar Casual Shirt",
-      "price": 799,
-      "original_price": 1499,
+      "id": "B01GH5KOZ2",
+      "title": "Under Armour Men's Tech Golf Polo",
+      "price": 19.56,
+      "original_price": 39.99,
       "category": "Clothing and Accessories",
-      "image_url": "https://rukminim1.flixcart.com/image/128/128/jxtakcw0/shirt/n/f/z/7xl-for-black-mods-original-imafgfg2z46a8jry.jpeg?q=70",
-      "brand": "Mo",
-      "rating": 5
+      "image_url": "https://m.media-amazon.com/images/I/31HqGRfa0EL.jpg",
+      "brand": "Under Armour Store",
+      "rating": 4.7
     },
     {
-      "id": "SFFFUZ953RJNTG4U",
-      "title": "Slides",
-      "price": 308,
-      "original_price": 849,
-      "category": "Footwear",
-      "image_url": "https://rukminim1.flixcart.com/image/128/128/ke8uv0w0-0/slipper-flip-flop/w/c/9/8-pub-g-style-p-black-beatle-blue-original-imafuz95tw2xffxj.jpeg?q=70",
-      "brand": "Black Beat",
-      "rating": 5
-    },
-    {
-      "id": "ETHFSRVEUG9Q4HTE",
-      "title": "Men Kurta and Pyjama Set Cotton Blend",
-      "price": 719,
-      "original_price": 1599,
+      "id": "B084HFMYG3",
+      "title": "Gildan Men's Underwear Cotton Stretch Boxer Briefs, Multipack",
+      "price": 21.23,
+      "original_price": 22.36,
       "category": "Clothing and Accessories",
-      "image_url": "https://rukminim1.flixcart.com/image/128/128/kbfeljk0/ethnic-set/2/w/j/l-230165-white-jagdish-garments-original-imafsryjggzsk3fv.jpeg?q=70",
-      "brand": "Jagdish Garmen",
-      "rating": 5
+      "image_url": "https://m.media-amazon.com/images/I/31CZ9A7YFdL.jpg",
+      "brand": "Gildan Store",
+      "rating": 4.7
+    },
+    {
+      "id": "B09FCBZ4YK",
+      "title": "Hanes Men's Underwear Boxer Briefs, Cotton Stretch Moisture-Wicking Underwear, Multi-pack",
+      "price": 26,
+      "original_price": 39,
+      "category": "Clothing and Accessories",
+      "image_url": "https://m.media-amazon.com/images/I/319M680aDGL.jpg",
+      "brand": "Hanes Store",
+      "rating": 4.7
+    },
+    {
+      "id": "B07JR4NDKS",
+      "title": "Grunt Style 1776 Flag",
+      "price": 29.99,
+      "original_price": 45,
+      "category": "Clothing and Accessories",
+      "image_url": "https://m.media-amazon.com/images/I/41oxM8sfJqL.jpg",
+      "brand": "Grunt Style Store",
+      "rating": 4.7
+    },
+    {
+      "id": "B0B34QD8XV",
+      "title": "POLO RALPH LAUREN Classic Sport Solid Ankle Socks - 6 Pair Pack - Athletic Cushioned Cotton",
+      "price": 28.98,
+      "original_price": 34,
+      "category": "Clothing and Accessories",
+      "image_url": "https://m.media-amazon.com/images/I/31D5eluUIgL.jpg",
+      "brand": "POLO RALPH LAUREN Store",
+      "rating": 4.7
+    },
+    {
+      "id": "B0B47TJ3TN",
+      "title": "POLO RALPH LAUREN Men's 4D Flex Cooling Microfiber Boxer Briefs & Long Leg Boxer Briefs, 3 Pack",
+      "price": 54.5,
+      "original_price": 82,
+      "category": "Clothing and Accessories",
+      "image_url": "https://m.media-amazon.com/images/I/41VR9xqunCL.jpg",
+      "brand": "POLO RALPH LAUREN Store",
+      "rating": 4.7
+    },
+    {
+      "id": "B0B34TX2T2",
+      "title": "Polo Ralph Lauren Men's Argyle Pattern Dress Crew Socks - 3 Pair Pack - Soft Lightweight Cotton Comfort",
+      "price": 24,
+      "original_price": 36,
+      "category": "Clothing and Accessories",
+      "image_url": "https://m.media-amazon.com/images/I/41cVLofq3vL.jpg",
+      "brand": "POLO RALPH LAUREN Store",
+      "rating": 4.7
+    },
+    {
+      "id": "B07JQ12R59",
+      "title": "Polo Ralph Lauren Men's Ribbed Casual Crew Socks -3 Pair Pack- Cotton Comfort & Heel-toe Reinforcement",
+      "price": 24,
+      "original_price": 36,
+      "category": "Clothing and Accessories",
+      "image_url": "https://m.media-amazon.com/images/I/41b+begU5OL.jpg",
+      "brand": "POLO RALPH LAUREN Store",
+      "rating": 4.7
     }
   ],
   "categories": [
-    "Bags, Wallets & Belts",
     "Clothing and Accessories",
-    "Footwear",
-    "Toys"
+    "Footwear"
   ]
 }

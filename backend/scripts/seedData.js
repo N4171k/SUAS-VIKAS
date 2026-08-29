@@ -1,6 +1,4 @@
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
-const fs = require('fs');
-const path = require('path');
 const { User, Product, Store, Inventory } = require('../models');
 const bcrypt = require('bcryptjs');
 
@@ -12,73 +10,22 @@ const sampleStores = [
   { storeId: 'store-05', name: 'VIKAS Store - Pune', city: 'Pune', address: 'Seasons Mall, Magarpatta', latitude: 18.5146, longitude: 73.9260 },
 ];
 
-/**
- * Parse fashion.csv and return product objects
- */
-const parseFashionCSV = () => {
-  const csvPath = path.join(__dirname, '..', '..', 'fashion.csv');
-  if (!fs.existsSync(csvPath)) {
-    console.error('❌ fashion.csv not found at:', csvPath);
-    process.exit(1);
-  }
-
-  const raw = fs.readFileSync(csvPath, 'utf-8');
-  const lines = raw.split('\n').filter((l) => l.trim());
-  const headers = lines[0].split(',').map((h) => h.trim());
-
-  console.log(`📄 CSV columns: ${headers.join(', ')}`);
-
-  const products = [];
-  for (let i = 1; i < lines.length; i++) {
-    const vals = lines[i].split(',').map((v) => v.trim());
-    if (vals.length < headers.length) continue;
-
-    const row = {};
-    headers.forEach((h, idx) => { row[h] = vals[idx] || ''; });
-
-    const titleParts = (row.ProductTitle || '').split(' ');
-    let brand = titleParts[0] || 'Fashion';
-    const genderWords = ['men', 'women', 'boys', 'girls', 'unisex', "men's", "women's"];
-    for (let j = 1; j < Math.min(titleParts.length, 5); j++) {
-      if (genderWords.includes(titleParts[j].toLowerCase())) break;
-      brand += ' ' + titleParts[j];
-    }
-
-    const categoryPrices = {
-      'Apparel': { min: 299, max: 4999 },
-      'Footwear': { min: 499, max: 7999 },
-    };
-    const priceRange = categoryPrices[row.Category] || { min: 299, max: 3999 };
-    const price = (Math.random() * (priceRange.max - priceRange.min) + priceRange.min).toFixed(2);
-    const discount = 0.1 + Math.random() * 0.4;
-    const originalPrice = (parseFloat(price) / (1 - discount)).toFixed(2);
-
-    products.push({
-      productId: row.ProductId || `csv_${i}`,
-      title: row.ProductTitle || `Fashion Product ${i}`,
-      description: `${row.ProductTitle}. ${row.Gender ? row.Gender + "'s" : ''} ${row.SubCategory || row.Category || 'Fashion'} in ${row.Colour || 'classic'} color. Perfect for ${row.Usage || 'casual'} wear.`,
-      category: row.Category || 'Fashion',
-      sub_category: row.SubCategory || null,
-      product_type: row.ProductType || null,
-      gender: row.Gender || null,
-      colour: row.Colour || null,
-      usage: row.Usage || null,
-      price,
-      original_price: originalPrice,
-      rating: (3 + Math.random() * 2).toFixed(1),
-      brand: brand.trim(),
-      image_url: row.ImageURL || `https://picsum.photos/seed/${row.ProductId || i}/400/400`,
-      features: `${row.Colour || ''} color, ${row.Usage || 'Casual'} wear, ${row.Gender || 'Unisex'}, ${row.ProductType || row.SubCategory || 'Fashion'}`,
-      is_active: true,
-    });
-  }
-
-  return products;
-};
+const sampleProducts = [
+  { productId: 'prod-001', title: 'Men\'s Cotton T-Shirt', description: 'Comfortable cotton t-shirt for everyday wear', category: 'Apparel', sub_category: 'T-Shirts', brand: 'VIKAS', price: 499, gender: 'Men', colour: 'Blue', usage: 'Casual', rating: 4.5, image_url: 'https://picsum.photos/seed/prod-001/400/400', is_active: true },
+  { productId: 'prod-002', title: 'Women\'s Summer Dress', description: 'Light and breezy summer dress', category: 'Apparel', sub_category: 'Dresses', brand: 'VIKAS', price: 1299, gender: 'Women', colour: 'Red', usage: 'Casual', rating: 4.7, image_url: 'https://picsum.photos/seed/prod-002/400/400', is_active: true },
+  { productId: 'prod-003', title: 'Men\'s Running Shoes', description: 'Lightweight running shoes with cushioned sole', category: 'Footwear', sub_category: 'Running Shoes', brand: 'VIKAS', price: 2999, gender: 'Men', colour: 'Black', usage: 'Sports', rating: 4.6, image_url: 'https://picsum.photos/seed/prod-003/400/400', is_active: true },
+  { productId: 'prod-004', title: 'Women\'s Sneakers', description: 'Trendy sneakers for everyday style', category: 'Footwear', sub_category: 'Sneakers', brand: 'VIKAS', price: 2499, gender: 'Women', colour: 'White', usage: 'Casual', rating: 4.4, image_url: 'https://picsum.photos/seed/prod-004/400/400', is_active: true },
+  { productId: 'prod-005', title: 'Men\'s Formal Shirt', description: 'Crisp formal shirt for office wear', category: 'Apparel', sub_category: 'Shirts', brand: 'VIKAS', price: 899, gender: 'Men', colour: 'White', usage: 'Formal', rating: 4.3, image_url: 'https://picsum.photos/seed/prod-005/400/400', is_active: true },
+  { productId: 'prod-006', title: 'Women\'s Jeans', description: 'Classic fit jeans with stretch', category: 'Apparel', sub_category: 'Jeans', brand: 'VIKAS', price: 1499, gender: 'Women', colour: 'Blue', usage: 'Casual', rating: 4.5, image_url: 'https://picsum.photos/seed/prod-006/400/400', is_active: true },
+  { productId: 'prod-007', title: 'Men\'s Hoodie', description: 'Warm and cozy hoodie for winter', category: 'Apparel', sub_category: 'Hoodies', brand: 'VIKAS', price: 1799, gender: 'Men', colour: 'Grey', usage: 'Casual', rating: 4.6, image_url: 'https://picsum.photos/seed/prod-007/400/400', is_active: true },
+  { productId: 'prod-008', title: 'Women\'s Cardigan', description: 'Soft cardigan for layering', category: 'Apparel', sub_category: 'Cardigans', brand: 'VIKAS', price: 1199, gender: 'Women', colour: 'Pink', usage: 'Casual', rating: 4.4, image_url: 'https://picsum.photos/seed/prod-008/400/400', is_active: true },
+  { productId: 'prod-009', title: 'Men\'s Loafers', description: 'Classic leather loafers', category: 'Footwear', sub_category: 'Loafers', brand: 'VIKAS', price: 3499, gender: 'Men', colour: 'Brown', usage: 'Formal', rating: 4.5, image_url: 'https://picsum.photos/seed/prod-009/400/400', is_active: true },
+  { productId: 'prod-010', title: 'Women\'s Sandals', description: 'Comfortable flat sandals', category: 'Footwear', sub_category: 'Sandals', brand: 'VIKAS', price: 999, gender: 'Women', colour: 'Tan', usage: 'Casual', rating: 4.2, image_url: 'https://picsum.photos/seed/prod-010/400/400', is_active: true },
+];
 
 const seed = async () => {
   try {
-    console.log('🌱 Starting DynamoDB seed...');
+    console.log('🌱 Starting Convex seed...');
 
     // Create admin user
     const adminHash = await bcrypt.hash('admin123', 12);
@@ -99,34 +46,25 @@ const seed = async () => {
     }
     console.log(`✅ ${sampleStores.length} stores created`);
 
-    // Parse and import fashion.csv products
-    const products = parseFashionCSV();
-    console.log(`📦 Parsed ${products.length} products from fashion.csv`);
-
-    // Create in batches of 500 (DynamoDB BatchWrite limit is 25, so loop individually with concurrency)
-    const BATCH = 25;
+    // Create products
     let createdCount = 0;
     const createdProducts = [];
-    for (let i = 0; i < products.length; i += BATCH) {
-      const batch = products.slice(i, i + BATCH);
-      await Promise.all(batch.map(async (p) => {
-        try {
-          const created = await Product.create(p);
-          createdProducts.push(created);
-          createdCount++;
-        } catch (err) {
-          if (err.name !== 'ConditionalCheckFailedException') console.error('   ⚠️', err.message);
-        }
-      }));
-      console.log(`   ✅ Batch ${Math.floor(i / BATCH) + 1}: ${batch.length} products`);
+    for (const product of sampleProducts) {
+      try {
+        const created = await Product.create(product);
+        createdProducts.push(created);
+        createdCount++;
+      } catch (err) {
+        console.error('   ⚠️', err.message);
+      }
     }
-    console.log(`✅ ${createdCount} total products created from fashion.csv`);
+    console.log(`✅ ${createdCount} products created`);
 
     // Create inventory (each store gets random stock for each product)
     const stores = await Store.findAll();
     let invCount = 0;
     for (const store of stores) {
-      for (const product of createdProducts.slice(0, 500)) {
+      for (const product of createdProducts) {
         await Inventory.upsert({
           storeId: store.id,
           productId: product.id,
@@ -139,7 +77,7 @@ const seed = async () => {
     console.log(`✅ ${invCount} inventory records created`);
 
     console.log('\n🎉 Seed completed successfully!');
-    console.log(`📊 Total: ${createdCount} fashion products across ${stores.length} stores`);
+    console.log(`📊 Total: ${createdCount} products across ${stores.length} stores`);
     console.log('\n📋 Test Accounts:');
     console.log('   Admin:    admin@vikas.com / admin123');
     console.log('   Store:    store@vikas.com / store123');

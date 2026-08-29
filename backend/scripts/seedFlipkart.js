@@ -5,7 +5,7 @@ const { Product, Store, Inventory } = require('../models');
 
 const seedFlipkart = async () => {
   try {
-    console.log('Connecting to DynamoDB...');
+    console.log('🌱 Starting Flipkart dataset seed for Convex...');
 
     const jsonPath = path.join(__dirname, '..', '..', 'flipkart_fashion_products_dataset.json');
     console.log(`Reading JSON from ${jsonPath}...`);
@@ -70,46 +70,60 @@ const seedFlipkart = async () => {
         mappedCategory = 'Apparel';
       }
 
-      productsToInsert.push({
+      const product = {
         productId: item.pid || item._id,
-        naturalKey: item.pid || item._id,
         title: item.title.substring(0, 500),
-        description: item.description ? item.description.substring(0, 10000) : null,
-        category: mappedCategory,
-        sub_category: item.sub_category,
-        gender,
-        colour,
+        category: mappedCategory || 'Apparel',
+        sub_category: item.sub_category || 'General',
         price,
-        original_price: originalPrice,
-        rating,
-        brand: item.brand,
-        image_url: (item.images && item.images.length > 0) ? item.images[0] : null,
-        features: Array.isArray(item.product_details) ? JSON.stringify(item.product_details).substring(0, 10000) : null,
-        is_active: !item.out_of_stock,
-        attributes: item,
+        rating: rating || 0,
+        brand: item.brand || 'Unknown',
+        isArEnabled: false,
         source: 'flipkart_fashion_products_dataset.json',
-      });
+      };
+      if (item.description) product.description = item.description.substring(0, 10000);
+      if (item.sub_category) product.sub_category = item.sub_category;
+      if (gender) product.gender = gender;
+      if (colour) product.colour = colour;
+      if (originalPrice !== price) product.original_price = originalPrice;
+      if (item.images && item.images.length > 0) product.image_url = item.images[0];
+      if (Array.isArray(item.product_details)) product.features = JSON.stringify(item.product_details).substring(0, 10000);
+      
+      productsToInsert.push(product);
     }
 
     console.log(`Prepared ${productsToInsert.length} products for insertion.`);
 
     // Batch insert
-    const BATCH_SIZE = 25;
+const BATCH_SIZE = 10;
     let insertedCount = 0;
 
     for (let i = 0; i < productsToInsert.length; i += BATCH_SIZE) {
       const batch = productsToInsert.slice(i, i + BATCH_SIZE);
-      try {
-        await Promise.all(batch.map(async (p) => {
-          const existing = await Product.findById(p.productId);
-          if (existing) return; // skip duplicates
-          await Product.create(p);
-          insertedCount++;
-        }));
-        console.log(`Inserted batch ${i / BATCH_SIZE + 1}... Total inserted: ${insertedCount}`);
-      } catch (err) {
-        console.error(`Error in batch ${i / BATCH_SIZE + 1}:`, err.message);
+      let batchInserted = 0;
+      for (const p of batch) {
+        let retries = 3;
+        while (retries > 0) {
+          try {
+            const existing = await Product.findById(p.productId);
+            if (existing) break;
+            await Product.create(p);
+            batchInserted++;
+            insertedCount++;
+            break;
+          } catch (itemErr) {
+            retries--;
+            if (retries === 0) {
+              console.error(`  Failed product ${p.productId} after 3 retries:`, itemErr.message);
+            } else {
+              console.error(`  Retry ${3 - retries} for ${p.productId}:`, itemErr.message);
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+          }
+        }
       }
+      console.log(`Inserted batch ${i / BATCH_SIZE + 1}... Batch inserted: ${batchInserted}, Total: ${insertedCount}`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
 
     console.log(`Successfully added ${insertedCount} products to the database!`);

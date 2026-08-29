@@ -1,143 +1,92 @@
-const { TABLES, INDEXES } = require('../config/db');
-const { getItem, putItem, deleteItem, query, scanAll } = require('./base');
+const { TABLES, nowISO, query, select, esc } = require('../config/mysql');
+const { selectAll, selectOne } = require('./baseMysql');
 
-const table = TABLES.Inventory;
+const TABLE = TABLES.Inventory;
 
 const toAPI = (item) => {
   if (!item) return null;
   return {
-    id: `${item.storeId}#${item.productId}`,
-    store_id: item.storeId,
-    product_id: item.productId,
+    id: `${item.store_id}#${item.product_id}`,
+    store_id: item.store_id,
+    product_id: item.product_id,
     quantity: item.quantity || 0,
     reserved_quantity: item.reserved || 0,
     version: item.version || 0,
-    updatedAt: item.updatedAt,
+    updatedAt: item.updated_at,
   };
 };
 
 const findOne = async (storeId, productId) => {
-  const item = await getItem(table, { storeId, productId });
-  return toAPI(item);
+  const row = await selectOne(TABLE, { store_id: storeId, product_id: productId });
+  return toAPI(row);
 };
 
 const findByProduct = async (productId) => {
-  const { items } = await query({
-    TableName: table,
-    IndexName: INDEXES.productIndex,
-    KeyConditionExpression: 'productId = :pid',
-    ExpressionAttributeValues: { ':pid': productId },
-  });
-  return items.map(toAPI).filter(Boolean);
+  const rows = await selectAll(TABLE, { where: { product_id: productId } });
+  return rows.map(toAPI).filter(Boolean);
 };
 
 const findByStore = async (storeId) => {
-  const { items } = await query({
-    TableName: table,
-    KeyConditionExpression: 'storeId = :sid',
-    ExpressionAttributeValues: { ':sid': storeId },
-  });
-  return items.map(toAPI).filter(Boolean);
+  const rows = await selectAll(TABLE, { where: { store_id: storeId } });
+  return rows.map(toAPI).filter(Boolean);
 };
 
 const upsert = async ({ storeId, productId, quantity = 0, reserved = 0 }) => {
-  const item = {
-    storeId,
-    productId,
-    quantity,
-    reserved,
-    version: 0,
-    updatedAt: new Date().toISOString(),
-  };
-  await putItem(table, item);
-  invalidateAvailability();
-  return toAPI(item);
+  const now = nowISO();
+  await query(
+    `INSERT INTO ${TABLE} (store_id, product_id, quantity, reserved, version, updated_at) ` +
+    `VALUES (${esc(storeId)}, ${esc(productId)}, ${Number(quantity) || 0}, ${Number(reserved) || 0}, 1, ${esc(now)}) ` +
+    `ON DUPLICATE KEY UPDATE quantity = VALUES(quantity), reserved = VALUES(reserved), ` +
+    `version = version + 1, updated_at = VALUES(updated_at)`
+  );
+  const row = await selectOne(TABLE, { store_id: storeId, product_id: productId });
+  return toAPI(row);
 };
 
-/**
- * Atomically reserve stock: quantity - reserved must stay >= requested.
- * Uses DynamoDB conditional update so concurrent reservations cannot overbook.
- */
 const reserveStock = async (storeId, productId, quantity = 1) => {
-  const { UpdateCommand } = require('@aws-sdk/lib-dynamodb');
-  const { docClient } = require('../config/db');
-  const now = new Date().toISOString();
-  try {
-    await docClient.send(new UpdateCommand({
-      TableName: table,
-      Key: { storeId, productId },
-      UpdateExpression: 'SET reserved = reserved + :q, #v = #v + :one, updatedAt = :now',
-      ConditionExpression: 'attribute_exists(storeId) AND (quantity - reserved) >= :q',
-      ExpressionAttributeNames: { '#v': 'version' },
-      ExpressionAttributeValues: { ':q': quantity, ':one': 1, ':now': now },
-      ReturnValues: 'ALL_NEW',
-    }));
-  } catch (err) {
-    if (err.name === 'ConditionalCheckFailedException') {
-      throw new Error('Not enough stock or product not found at this store.');
-    }
-    throw err;
+  const now = nowISO();
+  const res = await query(
+    `UPDATE ${TABLE} SET reserved = reserved + ${Number(quantity) || 0}, version = version + 1, updated_at = ${esc(now)} ` +
+    `WHERE store_id = ${esc(storeId)} AND product_id = ${esc(productId)} AND (quantity - reserved) >= ${Number(quantity) || 0}`
+  );
+
+  if (!res.affectedRows || res.affectedRows === 0) {
+    const existing = await selectOne(TABLE, { store_id: storeId, product_id: productId });
+    if (!existing) throw new Error('Inventory not found for product in store.');
+    throw new Error('Not enough stock for product in store.');
   }
-  invalidateAvailability();
-  return findOne(storeId, productId);
+
+  const row = await selectOne(TABLE, { store_id: storeId, product_id: productId });
+  return toAPI(row);
 };
 
-/** Release reserved stock (cancellation / expiry). */
 const releaseStock = async (storeId, productId, quantity = 1) => {
-  const { UpdateCommand } = require('@aws-sdk/lib-dynamodb');
-  const { docClient } = require('../config/db');
-  await docClient.send(new UpdateCommand({
-    TableName: table,
-    Key: { storeId, productId },
-    UpdateExpression: 'SET reserved = reserved - :q, updatedAt = :now',
-    ExpressionAttributeValues: { ':q': quantity, ':now': new Date().toISOString() },
-    ReturnValues: 'ALL_NEW',
-  })).catch(() => {});
-  invalidateAvailability();
-  return findOne(storeId, productId);
+  const now = nowISO();
+  await query(
+    `UPDATE ${TABLE} SET reserved = GREATEST(reserved - ${Number(quantity) || 0}, 0), version = version + 1, updated_at = ${esc(now)} ` +
+    `WHERE store_id = ${esc(storeId)} AND product_id = ${esc(productId)}`
+  );
+  const row = await selectOne(TABLE, { store_id: storeId, product_id: productId });
+  return toAPI(row);
 };
 
-/** Fulfill stock on pickup: decrement quantity and reserved. */
 const fulfillStock = async (storeId, productId, quantity = 1) => {
-  const { UpdateCommand } = require('@aws-sdk/lib-dynamodb');
-  const { docClient } = require('../config/db');
-  await docClient.send(new UpdateCommand({
-    TableName: table,
-    Key: { storeId, productId },
-    UpdateExpression: 'SET quantity = quantity - :q, reserved = reserved - :q, updatedAt = :now',
-    ExpressionAttributeValues: { ':q': quantity, ':now': new Date().toISOString() },
-    ReturnValues: 'ALL_NEW',
-  })).catch(() => {});
-  invalidateAvailability();
-  return findOne(storeId, productId);
+  const now = nowISO();
+  await query(
+    `UPDATE ${TABLE} SET quantity = quantity - ${Number(quantity) || 0}, ` +
+    `reserved = GREATEST(reserved - ${Number(quantity) || 0}, 0), version = version + 1, updated_at = ${esc(now)} ` +
+    `WHERE store_id = ${esc(storeId)} AND product_id = ${esc(productId)}`
+  );
+  const row = await selectOne(TABLE, { store_id: storeId, product_id: productId });
+  return toAPI(row);
 };
-
-/** Product ids that have available stock somewhere (cached 5 min — scanned on demand). */
-const AVAILABILITY_TTL_MS = 5 * 60 * 1000;
-let _availableIds = null;
-let _availableAt = 0;
 
 const availableProductIds = async () => {
-  if (_availableIds && Date.now() - _availableAt < AVAILABILITY_TTL_MS) {
-    return _availableIds;
-  }
-  const items = await scanAll({ TableName: table, ProjectionExpression: 'storeId, productId, quantity, reserved' });
-  const set = new Set();
-  items.forEach((it) => {
-    if ((it.quantity || 0) - (it.reserved || 0) > 0) set.add(it.productId);
-  });
-  _availableIds = [...set];
-  _availableAt = Date.now();
-  return _availableIds;
-};
-
-const invalidateAvailability = () => {
-  _availableIds = null;
-  _availableAt = 0;
+  const rows = await select(`SELECT DISTINCT product_id FROM ${TABLE} WHERE quantity - reserved > 0`);
+  return rows.map((r) => r.product_id);
 };
 
 module.exports = {
-  table,
   toAPI,
   findOne,
   findByProduct,
@@ -147,5 +96,4 @@ module.exports = {
   releaseStock,
   fulfillStock,
   availableProductIds,
-  invalidateAvailability,
 };

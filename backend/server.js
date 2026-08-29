@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const http = require('http');
 const { Server } = require('socket.io');
-const { connectDB } = require('./config/db');
+const { connectDB } = require('./config/mysql');
 const { errorHandler } = require('./middleware/errorHandler');
 
 // Import routes
@@ -98,7 +98,7 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
   try {
     await connectDB();
-    console.log('✅ DynamoDB ready');
+    console.log('✅ MySQL ready');
 
     server.listen(PORT, () => {
       console.log(`🚀 VIKAS Backend running on port ${PORT}`);

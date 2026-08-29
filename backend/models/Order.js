@@ -1,77 +1,82 @@
 const { v4: uuidv4 } = require('uuid');
-const { TABLES, INDEXES } = require('../config/db');
-const { getItem, putItem, updateItem, query, scanAll } = require('./base');
+const { TABLES, nowISO, insert, updateRow } = require('../config/mysql');
+const { selectAll, selectOne, countRows } = require('./baseMysql');
 
-const table = TABLES.Orders;
+const TABLE = TABLES.Orders;
+
+const parseJSON = (value, fallback) => {
+  if (value === null || value === undefined) return fallback;
+  if (typeof value === 'object') return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+};
 
 const toAPI = (item) => {
   if (!item) return null;
   return {
-    id: item.orderId,
-    orderId: item.orderId,
-    user_id: item.userId,
-    items: item.items || [],
+    id: item.order_id,
+    orderId: item.order_id,
+    user_id: item.user_id,
+    items: parseJSON(item.items, []),
     total: item.total,
     status: item.status || 'pending',
-    shipping_address: item.shippingAddress || null,
-    payment_method: item.paymentMethod || 'cod',
-    createdAt: item.createdAt,
-    updatedAt: item.updatedAt,
+    shipping_address: parseJSON(item.shipping_address, null),
+    payment_method: item.payment_method || 'cod',
+    createdAt: item.created_at,
+    updatedAt: item.updated_at,
   };
 };
 
 const create = async ({ userId, items, total, shippingAddress, paymentMethod = 'cod', status = 'confirmed' }) => {
   const orderId = `ord_${uuidv4()}`;
-  const now = new Date().toISOString();
-  const item = {
-    userId,
-    orderId,
-    items,
+  const now = nowISO();
+  const row = {
+    order_id: orderId,
+    user_id: userId,
+    items: JSON.stringify(items || []),
     total,
     status,
-    shippingAddress: shippingAddress || null,
-    paymentMethod,
-    createdAt: now,
-    updatedAt: now,
+    shipping_address: shippingAddress ? JSON.stringify(shippingAddress) : null,
+    payment_method: paymentMethod,
+    created_at: now,
+    updated_at: now,
   };
-  await putItem(table, item);
-  return toAPI(item);
+  await insert(TABLE, row);
+  return toAPI(row);
 };
 
 const findByUser = async (userId) => {
-  const { items } = await query({
-    TableName: table,
-    KeyConditionExpression: 'userId = :uid',
-    ExpressionAttributeValues: { ':uid': userId },
-    ScanIndexForward: false,
-  });
-  return items.map(toAPI).filter(Boolean);
+  const rows = await selectAll(TABLE, { where: { user_id: userId }, orderBy: { field: 'created_at', dir: 'DESC' } });
+  return rows.map(toAPI).filter(Boolean);
 };
 
 const findById = async (orderId) => {
-  const { items } = await query({
-    TableName: table,
-    IndexName: INDEXES.orderIdIndex,
-    KeyConditionExpression: 'orderId = :oid',
-    ExpressionAttributeValues: { ':oid': orderId },
-    Limit: 1,
-  });
-  return items.length ? toAPI(items[0]) : null;
+  const row = await selectOne(TABLE, { order_id: orderId });
+  return toAPI(row);
 };
 
 const update = async (userId, orderId, updates) => {
-  const item = await updateItem(table, { userId, orderId }, { ...updates, updatedAt: new Date().toISOString() });
-  return toAPI(item);
+  const data = { order_id: orderId };
+  for (const [key, value] of Object.entries(updates)) {
+    if (value === undefined) continue;
+    const column = key === 'shippingAddress' ? 'shipping_address' : key;
+    data[column] = (column === 'items' || column === 'shipping_address') && typeof value === 'object'
+      ? JSON.stringify(value)
+      : value;
+  }
+  data.updated_at = nowISO();
+  await updateRow(TABLE, data, ['order_id']);
+  return toAPI(await selectOne(TABLE, { order_id: orderId }));
 };
 
 const findAll = async () => {
-  const items = await scanAll({ TableName: table });
-  return items.map(toAPI).filter(Boolean);
+  const rows = await selectAll(TABLE, { orderBy: { field: 'created_at', dir: 'DESC' } });
+  return rows.map(toAPI).filter(Boolean);
 };
 
-const count = async () => {
-  const items = await scanAll({ TableName: table, ProjectionExpression: 'orderId' });
-  return items.length;
-};
+const count = async () => countRows(TABLE);
 
-module.exports = { table, toAPI, create, findByUser, findById, update, findAll, count };
+module.exports = { toAPI, create, findByUser, findById, update, findAll, count };

@@ -171,14 +171,5 @@ module.exports = router;
 
 // Internal: fetch raw user row (includes password_hash) for login
 async function getRawUser(email) {
-  const { TABLES, INDEXES } = require('../config/db');
-  const { query } = require('../models/base');
-  const { items } = await query({
-    TableName: TABLES.Users,
-    IndexName: INDEXES.emailIndex,
-    KeyConditionExpression: 'email = :email',
-    ExpressionAttributeValues: { ':email': email },
-    Limit: 1,
-  });
-  return items[0] || null;
+  return User.findByEmailRaw(email);
 }

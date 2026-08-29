@@ -1,7 +1,7 @@
 {
   "name": "vikas-backend",
   "version": "2.0.0",
-  "description": "VIKAS – Virtually Intelligent Knowledge Assisted Shopping Backend (AWS DynamoDB)",
+  "description": "VIKAS – Virtually Intelligent Knowledge Assisted Shopping Backend (Convex)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -10,14 +10,13 @@
     "seed:flipkart": "node scripts/seedFlipkart.js",
     "seed:54": "node scripts/seedVIKAS54.js",
     "test:connection": "node scripts/testConnection.js",
-    "tables:list": "node scripts/listTables.js",
-    "tables:create": "node scripts/createTables.js",
-    "tables:migrate-provisioned": "node scripts/migrateProvisionedTables.js"
+    "convex:dev": "npx convex dev",
+    "db:setup": "node scripts/setupMysql.js",
+    "db:homepage": "node scripts/rebuildHomepage.js"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.1111.0",
-    "@aws-sdk/lib-dynamodb": "^3.1111.0",
     "bcryptjs": "^2.4.3",
+    "convex": "^1.45.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",

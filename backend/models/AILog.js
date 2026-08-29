@@ -1,32 +1,24 @@
-const { v4: uuidv4 } = require('uuid');
-const { TABLES, INDEXES } = require('../config/db');
-const { putItem, query } = require('./base');
+const { TABLES, nowISO, insert } = require('../config/mysql');
+const { selectAll } = require('./baseMysql');
 
-const table = TABLES.AILogs;
+const TABLE = TABLES.AILogs;
 
 const create = async ({ userId = 'anonymous', query, responseSnippet, latencyMs, intent }) => {
-  const item = {
-    logId: uuidv4(),
-    userId,
-    createdAt: new Date().toISOString(),
+  const row = {
+    user_id: userId,
     query: query || null,
-    responseSnippet: responseSnippet || null,
-    latencyMs: latencyMs || null,
+    response_snippet: responseSnippet || null,
+    latency_ms: latencyMs || null,
     intent: intent || null,
+    created_at: nowISO(),
   };
-  await putItem(table, item);
-  return item;
+  await insert(TABLE, row);
+  return row;
 };
 
 const findByUser = async (userId) => {
-  const { items } = await query({
-    TableName: table,
-    IndexName: INDEXES.aiLogUserIndex,
-    KeyConditionExpression: 'userId = :uid',
-    ExpressionAttributeValues: { ':uid': userId },
-    ScanIndexForward: false,
-  });
-  return items;
+  const rows = await selectAll(TABLE, { where: { user_id: userId }, orderBy: { field: 'created_at', dir: 'DESC' } });
+  return rows;
 };
 
-module.exports = { table, create, findByUser };
+module.exports = { create, findByUser };
